@@ -27,3 +27,4 @@ void screen_line(const cstring str);
 void screen_print(const cstring str);
 void screen_print_line(const cstring str);
 uint8_t color_scheme(uint8_t fg, uint8_t bg);
+void move_cursor(uint16_t pos);

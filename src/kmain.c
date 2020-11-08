@@ -3,6 +3,7 @@
 #include <Version.h>
 #include <core/io/isr.h>
 #include <core/memory/memory.h>
+#include <drivers/keyboard.h>
 
 void kmain()
 {
@@ -22,6 +23,8 @@ void kmain()
     screen_print_line("ISR initialized.");
     irq_init();
     screen_print_line("ISQ initialized.");
+
+    keyboard_init();
 
     while (1) {
         __asm__("hlt");

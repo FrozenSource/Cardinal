@@ -1,5 +1,6 @@
 #include <drivers/screen.h>
 #include <std/string.h>
+#include <core/io/ports.h>
 
 uint8_t screen_scheme;
 byte* framebuffer;
@@ -8,6 +9,18 @@ int screen_row;
 
 #define VGA_WIDTH       80
 #define VGA_HEIGHT      24
+
+#define FB_COMMAND_PORT         0x3D4
+#define FB_DATA_PORT            0x3D5
+#define FB_HIGH_BYTE_COMMAND    14
+#define FB_LOW_BYTE_COMMAND     15
+
+void move_cursor(uint16_t pos) {
+    port_byte_out(FB_COMMAND_PORT, FB_HIGH_BYTE_COMMAND);
+    port_byte_out(FB_DATA_PORT,    ((pos >> 8) & 0x00FF));
+    port_byte_out(FB_COMMAND_PORT, FB_LOW_BYTE_COMMAND);
+    port_byte_out(FB_DATA_PORT,    pos & 0x00FF);
+}
 
 void print_char_at(char c, uint8_t scheme, uint32_t x, uint32_t y);
 void print_char(char c);
@@ -87,23 +100,18 @@ void print_char(char c) {
     if (c == '\n') {
         screen_col = 0;
         if (++screen_row >= VGA_HEIGHT) screen_row = 0;
-        return;
     } else if (c == '\t') {
         screen_col = screen_col + 4 - (screen_col % 4);
-        return;
     } else if (c == '\r') {
         screen_col = 0;
-        return;
-    }
-
-    print_char_at(c, screen_scheme, screen_col, screen_row);
-
-    if (++screen_col >= VGA_WIDTH)
-    {
-        screen_col = 0;
-        if (++screen_row >= VGA_HEIGHT)
-        {
-            screen_row = 0;
+    } else {
+        print_char_at(c, screen_scheme, screen_col, screen_row);
+        screen_col++;
+        if (screen_col == VGA_WIDTH) {
+            screen_col = 0;
+            screen_row++;
         }
     }
+
+    move_cursor((screen_row * VGA_WIDTH) + screen_col);
 }
