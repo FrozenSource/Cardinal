@@ -70,7 +70,8 @@ set(SOURCES
         ${PROJECT_SOURCE_DIR}/src/drivers/timer.c
 # drivers
         ${PROJECT_SOURCE_DIR}/src/drivers/screen.c
-        ${PROJECT_SOURCE_DIR}/src/drivers/keyboard.c)
+        ${PROJECT_SOURCE_DIR}/src/drivers/keyboard.c
+        ${PROJECT_SOURCE_DIR}/src/drivers/serial.c)
 
 set(KERNEL_OUTPUT ${PROJECT_SOURCE_DIR}/iso/boot/${KERNEL_NAME})
 

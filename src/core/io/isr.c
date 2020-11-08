@@ -2,7 +2,6 @@
 #include <drivers/screen.h>
 #include <std/convert.h>
 #include <core/io/ports.h>
-#include <drivers/timer.h>
 
 isr_t interrupt_handlers[256];
 
@@ -99,9 +98,11 @@ void isr_init()
     set_idt_gate(30, (uint64_t) isr30);
     set_idt_gate(31, (uint64_t) isr31);
 
-    set_idt_gate(IRQ0, (uint64_t)irq0);
-    set_idt_gate(IRQ1, (uint64_t)irq1);
-    set_idt_gate(IRQ2, (uint64_t)irq2);
+    set_idt_gate(IRQ0, (uint64_t) irq0);
+    set_idt_gate(IRQ1, (uint64_t) irq1);
+    set_idt_gate(IRQ2, (uint64_t) irq2);
+    set_idt_gate(IRQ3, (uint64_t) irq3);
+    set_idt_gate(IRQ4, (uint64_t) irq4);
     
     set_idt();
 }
@@ -109,8 +110,6 @@ void isr_init()
 void irq_init()
 {
     __asm__("sti");
-
-    init_timer(50);
 }
 
 void isr_handler(uint64_t id, UNUSED uint64_t stack)

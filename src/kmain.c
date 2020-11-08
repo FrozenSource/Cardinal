@@ -4,6 +4,8 @@
 #include <core/io/isr.h>
 #include <core/memory/memory.h>
 #include <drivers/keyboard.h>
+#include <drivers/timer.h>
+#include <drivers/serial.h>
 
 void kmain()
 {
@@ -24,7 +26,11 @@ void kmain()
     irq_init();
     screen_print_line("ISQ initialized.");
 
+    timer_init(50);
+    serial_init(SERIAL_COM1, SERIAL_SPEED_115200);
     keyboard_init();
+
+    serial_write(SERIAL_COM1, 'h');
 
     while (1) {
         __asm__("hlt");

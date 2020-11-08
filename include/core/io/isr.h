@@ -46,12 +46,16 @@ void isr_handler(uint64_t id, uint64_t stack) __asm__("isr_handler");
 extern void irq0();
 extern void irq1();
 extern void irq2();
+extern void irq3();
+extern void irq4();
 
 typedef void (*isr_t) (uint64_t stack);
 
 #define IRQ0 32
 #define IRQ1 33
-#define IRQ2 34
+#define IRQ2 34	
+#define IRQ3 35
+#define IRQ4 36
 
 #define PIC1        0x20 // Master PIC
 #define PIC2        0xA0 // Slave PIC

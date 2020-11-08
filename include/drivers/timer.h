@@ -2,4 +2,4 @@
 
 #include <std/types.h>
 
-void init_timer(int32_t freq);
+void timer_init(int32_t freq);

@@ -9,7 +9,7 @@ static void timer_callback(UNUSED uint64_t stack) {
     tick++;
 }
 
-void init_timer(int32_t freq) {
+void timer_init(int32_t freq) {
     register_interrupt_handler(IRQ0, timer_callback);
 
     int32_t divisor = 1193180 / freq;
