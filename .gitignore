@@ -4,3 +4,4 @@ cmake-build-release/
 .vscode/
 vendor/**/
 **.DS_Store
+iso/boot/kernel
