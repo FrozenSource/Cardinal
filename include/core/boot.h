@@ -1,8 +1,8 @@
 #pragma once
 
-#include <std/stdint.h>
+#include <std/types.h>
 
-struct multiboot_info {
+struct tMultibootHeader {
 	uint32_t flags;
 	uint32_t low_mem;
 	uint32_t high_mem;

@@ -7,14 +7,14 @@ set(KERNEL_NAME kernel)
 # Compiler setup
 
 set(CMAKE_C_STANDARD 99)
-set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_C_COMPILER x86_64-elf-gcc)
 set(CMAKE_CXX_COMPILER x86_64-elf-gcc)
 set(CMAKE_LD x86_64-elf-ld)
 set(CMAKE_AR x86_64-elf-ar)
 
-set(COMPILER_FLAGS "-W -Wall -ansi -pedantic -std=c99 -O2 -ffreestanding -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs")
+set(COMPILER_FLAGS "-W -Wall -ansi -pedantic -std=c99 -O2 -ffreestanding -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -mno-red-zone")
 set(CMAKE_LINK_OBJECTS "<CMAKE_LD> --nmagic --script=${PROJECT_SOURCE_DIR}/linker.ld <OBJECTS> -o ${PROJECT_SOURCE_DIR}/iso/boot/kernel.bin <LINK_LIBRARIES>")
 set(CMAKE_AR_OBJECTS "<CMAKE_AR> rcs <TARGET> <OBJECTS>")
 
@@ -56,8 +56,16 @@ set(SOURCES
         ${PROJECT_SOURCE_DIR}/src/boot/multiboot.asm
         ${PROJECT_SOURCE_DIR}/src/boot/boot.asm
         ${PROJECT_SOURCE_DIR}/src/boot/long_mode.asm
+        ${PROJECT_SOURCE_DIR}/src/boot/interrupts.asm
+# pre
+        ${PROJECT_SOURCE_DIR}/src/std/string.c
+        ${PROJECT_SOURCE_DIR}/src/std/convert.c
+        ${PROJECT_SOURCE_DIR}/src/core/memory/memory.c
 # c-entry
         ${PROJECT_SOURCE_DIR}/src/kmain.c
+# setup
+        ${PROJECT_SOURCE_DIR}/src/core/io/idt.c
+        ${PROJECT_SOURCE_DIR}/src/core/io/isr.c
 # drivers
         ${PROJECT_SOURCE_DIR}/src/drivers/screen.c)
 

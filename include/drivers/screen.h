@@ -1,7 +1,8 @@
 #pragma once
 
 #include <core/memory/locations.h>
-#include <std/stdint.h>
+#include <std/types.h>
+#include <core/memory/memory.h>
 
 static const uint8_t COLOR_BLACK         = 0;
 static const uint8_t COLOR_BLUE          = 1;
@@ -20,5 +21,9 @@ static const uint8_t COLOR_LIGHT_MAGENTA = 13;
 static const uint8_t COLOR_LIGHT_BROWN   = 14;
 static const uint8_t COLOR_WHITE         = 15;
 
-uint16_t vga_print(uint32_t, uint8_t);
-uint8_t new_scheme(uint8_t, uint8_t);
+void screen_init();
+void screen_clear();
+void screen_line(const cstring str);
+void screen_print(const cstring str);
+void screen_print_line(const cstring str);
+uint8_t color_scheme(uint8_t fg, uint8_t bg);

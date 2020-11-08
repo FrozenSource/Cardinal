@@ -1,19 +1,23 @@
-#include <std/stdint.h>
+#include <std/types.h>
 #include <drivers/screen.h>
+#include <Version.h>
+#include <core/io/isr.h>
 
 void kmain()
 {
-    uint16_t* vga = (uint16_t*) MEMORY_VGA_VIDEO_ADDRESS;
-    uint8_t scheme = new_scheme(COLOR_RED, COLOR_BLACK);
+    screen_init();
+    screen_clear();
+    screen_line(nullptr);
+    screen_print_line("CardinalOS");
+    screen_print("Kernel version: ");
+    screen_print_line(VERSION_STR);
+    screen_print("Build: ");
+    screen_print(__DATE__);
+    screen_print(" ");
+    screen_print_line(__TIME__);
+    screen_line(nullptr);
 
-    vga[0] = vga_print('H', scheme);
-    vga[1] = vga_print('a', scheme);
-    vga[2] = vga_print('l', scheme);
-    vga[3] = vga_print('l', scheme);
-    vga[4] = vga_print('o', scheme);
-    vga[5] = vga_print(' ', scheme);
-    vga[6] = vga_print('b', scheme);
-    vga[7] = vga_print('r', scheme);
-    vga[8] = vga_print('a', scheme);
-    vga[9] = vga_print('m', scheme);
+    isr_init();
+    __asm__("int $3");
+    __asm__("int $2");
 }
