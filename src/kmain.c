@@ -18,6 +18,5 @@ void kmain()
     screen_line(nullptr);
 
     isr_init();
-    __asm__("int $3");
-    __asm__("int $2");
+    screen_print_line("ISR initialized.");
 }
