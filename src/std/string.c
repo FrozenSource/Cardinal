@@ -6,6 +6,10 @@ memsize_t CStrLength(const cstring sStr) {
     return ret;
 }
 
+memsize_t strlen(const char* str) {
+    return CStrLength((const cstring) str);
+}
+
 void CStrReverse(const cstring sStr) {
     memsize_t c, i, j;
     for (i = 0, j = CStrLength(sStr) - 1; i < j; i++, j--) {

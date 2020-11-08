@@ -57,9 +57,10 @@ set(SOURCES
         ${PROJECT_SOURCE_DIR}/src/boot/boot.asm
         ${PROJECT_SOURCE_DIR}/src/boot/long_mode.asm
         ${PROJECT_SOURCE_DIR}/src/boot/interrupts.asm
-# pre
+# std
         ${PROJECT_SOURCE_DIR}/src/std/string.c
         ${PROJECT_SOURCE_DIR}/src/std/convert.c
+        ${PROJECT_SOURCE_DIR}/src/std/io.c
         ${PROJECT_SOURCE_DIR}/src/core/memory/memory.c
 # c-entry
         ${PROJECT_SOURCE_DIR}/src/kmain.c

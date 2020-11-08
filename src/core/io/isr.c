@@ -120,6 +120,8 @@ void isr_handler(uint64_t id, UNUSED uint64_t stack)
     itoa(id, s);
     screen_print_line(s);
     screen_print_line(exception_messages[id]);
+
+    __asm__("hlt");
 }
 
 void irq_handler(uint64_t id, uint64_t stack)

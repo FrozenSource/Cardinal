@@ -6,19 +6,16 @@
 #include <drivers/keyboard.h>
 #include <drivers/timer.h>
 #include <drivers/serial.h>
+#include <std/io.h>
 
 void kmain()
 {
     screen_init();
     screen_clear();
     screen_line(nullptr);
-    screen_print_line("CardinalOS");
-    screen_print("Kernel version: ");
-    screen_print_line(VERSION_STR);
-    screen_print("Build: ");
-    screen_print(__DATE__);
-    screen_print(" ");
-    screen_print_line(__TIME__);
+    printf("CardinalOS\n");
+    printf("Kernel version: %s\n", VERSION_STR);
+    printf("Build datetime: %s %s\n", __DATE__, __TIME__);
     screen_line(nullptr);
 
     isr_init();
@@ -31,6 +28,7 @@ void kmain()
     keyboard_init();
 
     serial_write(SERIAL_COM1, 'h');
+
 
     while (1) {
         __asm__("hlt");

@@ -56,6 +56,10 @@ void screen_print(const cstring str)
     }
 }
 
+void screen_printc(char c) {
+    print_char(c);
+}
+
 void screen_print_line(const cstring str)
 {
     screen_print(str);
