@@ -66,6 +66,8 @@ set(SOURCES
 # setup
         ${PROJECT_SOURCE_DIR}/src/core/io/idt.c
         ${PROJECT_SOURCE_DIR}/src/core/io/isr.c
+        ${PROJECT_SOURCE_DIR}/src/core/io/ports.c
+        ${PROJECT_SOURCE_DIR}/src/drivers/timer.c
 # drivers
         ${PROJECT_SOURCE_DIR}/src/drivers/screen.c)
 

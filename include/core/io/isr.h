@@ -37,4 +37,28 @@ extern void isr30();
 extern void isr31();
 
 void isr_init();
+void irq_init();
 void isr_handler(uint64_t id, uint64_t stack) __asm__("isr_handler");
+
+
+// IRQ
+
+extern void irq0();
+extern void irq1();
+extern void irq2();
+
+typedef void (*isr_t) (uint64_t stack);
+
+#define IRQ0 32
+#define IRQ1 33
+#define IRQ2 34
+
+#define PIC1        0x20 // Master PIC
+#define PIC2        0xA0 // Slave PIC
+#define PIC1_DATA   (PIC1 + 1)
+#define PIC2_DATA   (PIC2 + 1)
+#define PIC_EOI     0x20 // end of interrupt
+#define IRQ_BASE    0x20
+
+void irq_handler(uint64_t id, uint64_t stack) __asm__("irq_handler");
+void register_interrupt_handler(uint64_t id, isr_t handler);

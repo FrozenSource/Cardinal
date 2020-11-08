@@ -63,12 +63,30 @@ void print_char_at(char c, uint8_t scheme, uint32_t x, uint32_t y) {
 
     framebuffer[offset] = c;
     framebuffer[offset + 1] = scheme;
+
+    // scrolling
+    if (offset > VGA_HEIGHT * VGA_WIDTH * 2) {
+        for (memsize_t i = 1; i < VGA_HEIGHT; i++) {
+            memcpy(
+                    (void *) (C_MEMORY_VGA_VIDEO_ADDRESS + (2 * i * VGA_WIDTH)),
+                    (const void *) (C_MEMORY_VGA_VIDEO_ADDRESS + (2 * (i - 1) * VGA_WIDTH)),
+                    2 * VGA_WIDTH
+                  );
+        }
+
+        char* last_line = (char *)(2 * (VGA_HEIGHT) * VGA_WIDTH + C_MEMORY_VGA_VIDEO_ADDRESS);
+        for (int i = 0; i < VGA_WIDTH * 2; i++) {
+            last_line[i] = 0;
+        }
+
+        screen_row--;
+    }
 }
 
 void print_char(char c) {
     if (c == '\n') {
         screen_col = 0;
-        if (++screen_row == VGA_HEIGHT) screen_row = 0;
+        if (++screen_row >= VGA_HEIGHT) screen_row = 0;
         return;
     } else if (c == '\t') {
         screen_col = screen_col + 4 - (screen_col % 4);
@@ -80,10 +98,10 @@ void print_char(char c) {
 
     print_char_at(c, screen_scheme, screen_col, screen_row);
 
-    if (++screen_col == VGA_WIDTH)
+    if (++screen_col >= VGA_WIDTH)
     {
         screen_col = 0;
-        if (++screen_row == VGA_HEIGHT)
+        if (++screen_row >= VGA_HEIGHT)
         {
             screen_row = 0;
         }

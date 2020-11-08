@@ -1,6 +1,10 @@
 #include <core/io/isr.h>
 #include <drivers/screen.h>
 #include <std/convert.h>
+#include <core/io/ports.h>
+#include <drivers/timer.h>
+
+isr_t interrupt_handlers[256];
 
 const cstring exception_messages[] = {
     "Division By Zero",
@@ -42,6 +46,26 @@ const cstring exception_messages[] = {
 
 void isr_init()
 {
+// start initialization
+    port_byte_out(PIC1, 0x11);
+    port_byte_out(PIC2, 0x11);
+
+    // set IRQ base numbers for each PIC
+    port_byte_out(PIC1_DATA, IRQ_BASE);
+    port_byte_out(PIC2_DATA, IRQ_BASE + 8);
+
+    // use IRQ number 2 to relay IRQs from the slave PIC
+    port_byte_out(PIC1_DATA, 0x04);
+    port_byte_out(PIC2_DATA, 0x02);
+
+    // finish initialization
+    port_byte_out(PIC1_DATA, 0x01);
+    port_byte_out(PIC2_DATA, 0x01);
+
+    // mask all IRQs
+    port_byte_out(PIC1_DATA, 0x00);
+    port_byte_out(PIC2_DATA, 0x00);
+
     set_idt_gate(0, (uint64_t) isr0);
     set_idt_gate(1, (uint64_t) isr1);
     set_idt_gate(2, (uint64_t) isr2);
@@ -75,10 +99,21 @@ void isr_init()
     set_idt_gate(30, (uint64_t) isr30);
     set_idt_gate(31, (uint64_t) isr31);
 
+    set_idt_gate(IRQ0, (uint64_t)irq0);
+    set_idt_gate(IRQ1, (uint64_t)irq1);
+    set_idt_gate(IRQ2, (uint64_t)irq2);
+    
     set_idt();
 }
 
-void isr_handler(uint64_t id, uint64_t stack)
+void irq_init()
+{
+    __asm__("sti");
+
+    init_timer(50);
+}
+
+void isr_handler(uint64_t id, UNUSED uint64_t stack)
 {
     char s[3];
 
@@ -86,4 +121,24 @@ void isr_handler(uint64_t id, uint64_t stack)
     itoa(id, s);
     screen_print_line(s);
     screen_print_line(exception_messages[id]);
+}
+
+void irq_handler(uint64_t id, uint64_t stack)
+{
+    if (id >= 40)
+    {
+        port_byte_out(PIC2, PIC_EOI);
+    }
+
+    port_byte_out(PIC1, PIC_EOI);
+
+    if (interrupt_handlers[id] != 0) {
+        isr_t handler = interrupt_handlers[id];
+        handler(stack);
+    }
+}
+
+void register_interrupt_handler(uint64_t id, isr_t handler)
+{
+    interrupt_handlers[id] = handler;
 }

@@ -2,6 +2,7 @@
 #include <drivers/screen.h>
 #include <Version.h>
 #include <core/io/isr.h>
+#include <core/memory/memory.h>
 
 void kmain()
 {
@@ -19,4 +20,10 @@ void kmain()
 
     isr_init();
     screen_print_line("ISR initialized.");
+    irq_init();
+    screen_print_line("ISQ initialized.");
+
+    while (1) {
+        __asm__("hlt");
+    }
 }
