@@ -5,7 +5,7 @@
 #include <drivers/screen.h>
 #include <std/convert.h>
 
-void printf(const cstring format, ...)
+void printf(cstring format, ...)
 {
     va_list arg;
     va_start(arg, format);

@@ -8,7 +8,7 @@
 #include <drivers/serial.h>
 #include <std/io.h>
 
-void kmain()
+extern "C" void kmain()
 {
     screen_init();
     screen_clear();

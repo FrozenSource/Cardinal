@@ -1,8 +1,7 @@
 #pragma once
-
 #include <std/types.h>
 
-void printf(const cstring format, ...);
+void printf(cstring format, ...);
 
 char *convert(unsigned int num, int base);
 
