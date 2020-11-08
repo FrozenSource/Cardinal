@@ -1,7 +1,7 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include <stdint.h>
+#include <std/stdint.h>
 
 #define VIDEO_ADDRESS 0xB8000
 

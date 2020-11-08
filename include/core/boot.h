@@ -1,7 +1,7 @@
 #ifndef BOOT_H
 #define BOOT_H
 
-#include <stdint.h>
+#include <std/stdint.h>
 
 typedef struct multiboot_info {
 	uint32_t flags;

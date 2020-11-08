@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include <std/stdint.h>
 #include <drivers/screen.h>
 
 void kmain(void)

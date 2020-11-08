@@ -1,4 +1,4 @@
-#include "screen.h"
+#include <drivers/screen.h>
 
 uint8_t new_scheme(uint8_t fg, uint8_t bg)
 {
