@@ -14,7 +14,7 @@ set(CMAKE_CXX_COMPILER x86_64-elf-gcc)
 set(CMAKE_LD x86_64-elf-ld)
 set(CMAKE_AR x86_64-elf-ar)
 
-set(COMPILER_FLAGS "-W -Wall -ansi -pedantic -std=c99 -O2 -ffreestanding -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -mno-red-zone")
+set(COMPILER_FLAGS "-W -Wall -pedantic -std=c99 -O2 -ffreestanding -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -mno-red-zone")
 set(CMAKE_LINK_OBJECTS "<CMAKE_LD> --nmagic --script=${PROJECT_SOURCE_DIR}/linker.ld <OBJECTS> -o ${PROJECT_SOURCE_DIR}/iso/boot/kernel.bin <LINK_LIBRARIES>")
 set(CMAKE_AR_OBJECTS "<CMAKE_AR> rcs <TARGET> <OBJECTS>")
 

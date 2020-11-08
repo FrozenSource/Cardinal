@@ -1,18 +1,14 @@
 #include <std/string.h>
 
-memsize_t CStrLength(const cstring sStr) {
+memsize_t strlen(const cstring sStr) {
     memsize_t ret = 0;
     while (sStr[ret] != 0) ret++;
     return ret;
 }
 
-memsize_t strlen(const char* str) {
-    return CStrLength((const cstring) str);
-}
-
-void CStrReverse(const cstring sStr) {
+void reverse(const cstring sStr) {
     memsize_t c, i, j;
-    for (i = 0, j = CStrLength(sStr) - 1; i < j; i++, j--) {
+    for (i = 0, j = strlen(sStr) - 1; i < j; i++, j--) {
         c = sStr[i];
         sStr[i] = sStr[j];
         sStr[j] = c;

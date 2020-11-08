@@ -38,7 +38,7 @@ void screen_init()
 }
 
 void screen_line(const cstring str) {
-    memsize_t uiStrSize = str > (cstring) nullptr ? CStrLength(str) : 0;
+    memsize_t uiStrSize = str > (cstring) nullptr ? strlen(str) : 0;
     if (screen_col != 0) print_char('\n');
     for (memsize_t uiIndex = screen_col; uiIndex < VGA_WIDTH; uiIndex++) {
         if (uiIndex < uiStrSize) {
@@ -51,7 +51,7 @@ void screen_line(const cstring str) {
 
 void screen_print(const cstring str)
 {
-    for (memsize_t i = 0; i < CStrLength(str); i++) {
+    for (memsize_t i = 0; i < strlen(str); i++) {
         print_char(str[i]);
     }
 }

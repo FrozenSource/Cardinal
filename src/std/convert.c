@@ -18,5 +18,5 @@ void itoa(int32_t iValue, char sOut[]) {
     }
     sOut[i] = '\0';
 
-    CStrReverse(sOut);
+    reverse(sOut);
 }

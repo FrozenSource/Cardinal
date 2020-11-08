@@ -15,7 +15,7 @@ void kmain()
     screen_line(nullptr);
     printf("CardinalOS\n");
     printf("Kernel version: %s\n", VERSION_STR);
-    printf("Build datetime: %s %s\n", __DATE__, __TIME__);
+    printf("Build on %s at %s\n", __DATE__, __TIME__);
     screen_line(nullptr);
 
     isr_init();

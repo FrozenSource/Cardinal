@@ -1,7 +1,7 @@
 #include <drivers/keyboard.h>
 #include <std/types.h>
+#include <std/io.h>
 #include <core/io/isr.h>
-#include <drivers/screen.h>
 #include <std/convert.h>
 #include <core/io/ports.h>
 
@@ -15,12 +15,7 @@ static void keyboard_callback(UNUSED uint64_t stack)
         return;
     }
 
-    char s[3];
-    itoa(scancode, s);
-
-    screen_print("Received: ");
-    screen_print(s);
-    screen_print("\n");
+    printf("Received: %d\n", scancode);
 }
 
 void keyboard_init()

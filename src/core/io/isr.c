@@ -1,7 +1,7 @@
 #include <core/io/isr.h>
-#include <drivers/screen.h>
 #include <std/convert.h>
 #include <core/io/ports.h>
+#include <std/io.h>
 
 isr_t interrupt_handlers[256];
 
@@ -114,12 +114,7 @@ void irq_init()
 
 void isr_handler(uint64_t id, UNUSED uint64_t stack)
 {
-    char s[3];
-
-    screen_print("Received interrupt: ");
-    itoa(id, s);
-    screen_print_line(s);
-    screen_print_line(exception_messages[id]);
+    printf("Received interrupt: %d\n%s\n", id, exception_messages[id]);
 
     __asm__("hlt");
 }
