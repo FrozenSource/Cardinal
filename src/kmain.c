@@ -1,9 +1,9 @@
 #include <std/stdint.h>
 #include <drivers/screen.h>
 
-void kmain(void)
+void kmain()
 {
-    uint16_t* vga = (uint16_t*) VIDEO_ADDRESS;
+    uint16_t* vga = (uint16_t*) MEMORY_VGA_VIDEO_ADDRESS;
     uint8_t scheme = new_scheme(COLOR_RED, COLOR_BLACK);
 
     vga[0] = vga_print('H', scheme);

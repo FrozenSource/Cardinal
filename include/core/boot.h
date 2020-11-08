@@ -1,9 +1,8 @@
-#ifndef BOOT_H
-#define BOOT_H
+#pragma once
 
 #include <std/stdint.h>
 
-typedef struct multiboot_info {
+struct multiboot_info {
 	uint32_t flags;
 	uint32_t low_mem;
 	uint32_t high_mem;
@@ -30,6 +29,4 @@ typedef struct multiboot_info {
 	unsigned long vbe_interface_seg;
 	unsigned long vbe_interface_off;
 	unsigned long vbe_interface_len;
-} multiboot_info_t;
-
-#endif
+};

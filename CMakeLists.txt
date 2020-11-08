@@ -55,6 +55,7 @@ set(SOURCES
 # boot
         ${PROJECT_SOURCE_DIR}/src/boot/multiboot.asm
         ${PROJECT_SOURCE_DIR}/src/boot/boot.asm
+        ${PROJECT_SOURCE_DIR}/src/boot/long_mode.asm
 # c-entry
         ${PROJECT_SOURCE_DIR}/src/kmain.c
 # drivers

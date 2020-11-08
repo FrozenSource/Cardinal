@@ -1,11 +1,11 @@
 ; cf. https://intermezzos.github.io/book/hello-world.html
 
-extern kmain
-global _start
+global start
+extern long_mode_start
 
 section .text
 bits 32
-_start:
+start:
     ; Point the first entry of the level 4 page table to the first entry in the
     ; p3 table
     mov eax, p3_table
@@ -53,16 +53,14 @@ _start:
 	mov ds, ax
 	mov es, ax
 
-	call kmain
+	jmp gdt64.code:long_mode_start
 
 	; should not be reached
 	hlt
 
 ; block started by symbol
 section .bss
-
 align 4096
-
 p4_table:
 	; `resb` means 'reserves bytes'
     resb 4096
@@ -75,13 +73,10 @@ section .rodata
 gdt64:
 	; `dq` means 'define quad-word'
     dq 0
-
 .code: equ $ - gdt64
     dq (1<<44) | (1<<47) | (1<<41) | (1<<43) | (1<<53)
-
 .data: equ $ - gdt64
     dq (1<<44) | (1<<47) | (1<<41)
-
 .pointer:
     dw .pointer - gdt64 - 1
     dq gdt64
