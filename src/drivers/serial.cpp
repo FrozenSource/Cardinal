@@ -1,5 +1,6 @@
 #include <drivers/serial.h>
 #include <core/io/ports.h>
+#include <std/string.h>
 
 int serial_received(uint32_t com);
 int serial_is_transmit_fifo_empty(uint32_t com);
@@ -46,4 +47,10 @@ void serial_write(uint32_t com, char c) {
     while (serial_is_transmit_fifo_empty(com) == 0) ;
 
     port_byte_out(com, c);
+}
+
+void serial_write(uint32_t com, const cstring str) {
+    for (memsize_t uiIndex = 0; uiIndex < strlen(str); uiIndex++) {
+        serial_write(com, str[uiIndex]);
+    }
 }
