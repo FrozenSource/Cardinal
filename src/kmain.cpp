@@ -15,8 +15,7 @@ extern "C" void kmain()
     printf("Kernel version: %s\n", VERSION_STR);
     printf("Build on %s at %s\n", __DATE__, __TIME__);
 
-    isr_init();
-    irq_init();
+    Setup_Interrupts();
 
     cStaticTimer::Get().Init();
     cStaticKeyBoardDriver::Get().Init();

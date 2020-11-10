@@ -48,6 +48,27 @@ configure_file(${PROJECT_SOURCE_DIR}/include/Version.template ${PROJECT_SOURCE_D
 
 # Sources
 
+set(HEADERS
+# etc
+        ${PROJECT_SOURCE_DIR}/include/debug.h
+        ${PROJECT_SOURCE_DIR}/include/Version.h
+# boot
+        ${PROJECT_SOURCE_DIR}/include/boot.h
+# std
+        ${PROJECT_SOURCE_DIR}/include/std/string.h
+        ${PROJECT_SOURCE_DIR}/include/std/convert.h
+        ${PROJECT_SOURCE_DIR}/include/std/io.h
+        ${PROJECT_SOURCE_DIR}/include/core/memory/memory.h
+# setup
+        ${PROJECT_SOURCE_DIR}/include/core/io/idt.h
+        ${PROJECT_SOURCE_DIR}/include/core/io/isr.h
+        ${PROJECT_SOURCE_DIR}/include/core/io/ports.h
+        ${PROJECT_SOURCE_DIR}/include/drivers/timer.h
+# drivers
+        ${PROJECT_SOURCE_DIR}/include/drivers/screen.h
+        ${PROJECT_SOURCE_DIR}/include/drivers/keyboard.h
+        ${PROJECT_SOURCE_DIR}/include/drivers/serial.h)
+
 set(SOURCES
 # boot
         ${PROJECT_SOURCE_DIR}/src/boot/multiboot.asm
