@@ -10,6 +10,9 @@ cstring dtoa(T value, uint8_t uiDecimals) {
 
     cstring sBuffer = dtoaBuffer;
     cstring sMajor = itoa((int)value);
+
+    if (value < 0) value *= -1;
+
     while (*sMajor != 0) {
         *sBuffer++ = *sMajor++;
     }

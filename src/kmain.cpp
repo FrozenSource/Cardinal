@@ -20,7 +20,7 @@ extern "C" void kmain()
     Setup_Interrupts();
 
     float f = 333.715f;
-    double d = 9.4;
+    double d = -9.4;
     printf("f: %s\n", dtoa(f, 6));
     printf("d: %s\n", dtoa(d, 255));
 
