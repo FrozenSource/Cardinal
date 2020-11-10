@@ -18,3 +18,5 @@ private: \
     ClassName(ClassName const&)                     = delete; \
     ClassName(ClassName&&)                          = delete; \
     void operator=(ClassName const&)                = delete;
+
+#define PACKED __attribute__((__packed__))

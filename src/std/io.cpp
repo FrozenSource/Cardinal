@@ -11,7 +11,6 @@ void printf(cstring format, ...)
     va_start(arg, format);
 
     int i_val;
-    char s_val[20];
     for (memsize_t i = 0; i < strlen(format); i++) {
         char c = format[i];
 
@@ -27,8 +26,7 @@ void printf(cstring format, ...)
                         i_val = -i_val;
                         putchar('-');
                     }
-                    itoa(i_val, s_val);
-                    puts(s_val);
+                    puts(itoa(i_val));
                     break;
 
                 case 'x':

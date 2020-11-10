@@ -7,6 +7,8 @@
 #include <drivers/timer.h>
 #include <drivers/serial.h>
 #include <std/io.h>
+#include <std/convert.h>
+#include <std/string.h>
 
 extern "C" void kmain()
 {
@@ -16,6 +18,11 @@ extern "C" void kmain()
     printf("Build on %s at %s\n", __DATE__, __TIME__);
 
     Setup_Interrupts();
+
+    float f = 333.715f;
+    double d = 9.4;
+    printf("f: %s\n", dtoa(f, 6));
+    printf("d: %s\n", dtoa(d, 255));
 
     cStaticTimer::Get().Init();
     cStaticKeyBoardDriver::Get().Init();

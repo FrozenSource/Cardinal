@@ -1,5 +1,7 @@
 #pragma once
 
+#include <std/core.h>
+
 #define UNUSED __attribute__((unused))
 
 typedef signed char int8_t;

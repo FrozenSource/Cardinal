@@ -1,27 +1,9 @@
 ; cf. https://github.com/ghaiklor/ghaiklor-os-gcc
 ; cf. https://github.com/tmathmeyer/sos
-global interrupt
 extern isr_handler
 extern irq_handler
 
-%macro isr_handler 1
-    global isr%1
-    isr%1:
-        cli
-        mov rdi, dword %1
-        jmp isr_common_stub
-%endmacro
-
-%macro irq_handler 1
-    global irq%1
-    irq%1:
-        cli
-        mov rdi, dword (32 + %1)
-        jmp irq_common_stub
-%endmacro
-
-isr_common_stub:
-    ; save registers
+%macro save_registers 0
     push rax
     push rbx
     push rcx
@@ -38,11 +20,9 @@ isr_common_stub:
     push r14
     push r15
     mov rsi, rsp
+%endmacro
 
-    ; call handler
-    call isr_handler
-
-    ; restore registers
+%macro restore_register_return 0
     pop r15
     pop r14
     pop r13
@@ -60,6 +40,33 @@ isr_common_stub:
     pop rax
     sti
     iretq
+%endmacro
+
+isr_common_stub:
+    save_registers
+    call isr_handler
+    restore_register_return
+
+irq_common_stub:
+    save_registers
+    call irq_handler
+    restore_register_return
+
+%macro isr_handler 1
+    global isr%1
+    isr%1:
+        cli
+        mov rdi, dword %1
+        jmp isr_common_stub
+%endmacro
+
+%macro irq_handler 1
+    global irq%1
+    irq%1:
+        cli
+        mov rdi, dword (32 + %1)
+        jmp irq_common_stub
+%endmacro
 
 ; define interruptions
 ; should be keep in sync with src/core/isr.h
@@ -95,47 +102,6 @@ isr_handler 28
 isr_handler 29
 isr_handler 30
 isr_handler 31
-
-irq_common_stub:
-    ; save registers
-    push rax
-    push rbx
-    push rcx
-    push rdx
-    push rsi
-    push rdi
-    push rbp
-    push r8
-    push r9
-    push r10
-    push r11
-    push r12
-    push r13
-    push r14
-    push r15
-    mov rsi, rsp
-
-    ; call handler
-    call irq_handler
-
-    ; restore registers
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop r11
-    pop r10
-    pop r9
-    pop r8
-    pop rbp
-    pop rdi
-    pop rsi
-    pop rdx
-    pop rcx
-    pop rbx
-    pop rax
-    sti
-    iretq
 
 irq_handler 0
 irq_handler 1

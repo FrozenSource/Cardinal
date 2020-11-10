@@ -52,9 +52,6 @@ extern "C" void irq4();
 
 isr_t interrupt_handlers[256];
 
-void isr_handler(uint64_t id, uint64_t stack) __asm__("isr_handler");
-void irq_handler(uint64_t id, uint64_t stack) __asm__("irq_handler");
-
 const cstring exception_messages[] = {
     "Division By Zero",
     "Debug",
@@ -172,17 +169,15 @@ void irq_init()
     gbIRQ_Init = true;
 }
 
-void isr_handler(uint64_t id, UNUSED uint64_t stack)
-{
+void isr_handler(uint64_t id, uint64_t stack) __asm__("isr_handler");
+void isr_handler(uint64_t id, UNUSED uint64_t stack) {
     printf("Received interrupt: %d\n%s\n", id, exception_messages[id]);
-
     __asm__("hlt");
 }
 
-void irq_handler(uint64_t id, uint64_t stack)
-{
-    if (id >= 40)
-    {
+void irq_handler(uint64_t id, uint64_t stack) __asm__("irq_handler");
+void irq_handler(uint64_t id, uint64_t stack) {
+    if (id >= 40)     {
         port_byte_out(PIC2, PIC_EOI);
     }
 
@@ -194,8 +189,7 @@ void irq_handler(uint64_t id, uint64_t stack)
     }
 }
 
-void register_interrupt_handler(uint64_t id, isr_t handler)
-{
+void register_interrupt_handler(uint64_t id, isr_t handler) {
     irq_init();
     interrupt_handlers[id] = handler;
 }
