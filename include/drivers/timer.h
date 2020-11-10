@@ -1,5 +1,17 @@
 #pragma once
 
 #include <std/types.h>
+#include <std/core.h>
+#include <drivers/driver.h>
 
-void timer_init(int32_t freq);
+class cStaticTimer : public IDriver {
+public:
+    bool Init();
+    bool Destroy();
+
+    uint32_t GetTick();
+protected:
+private:
+
+    SINGLETON(cStaticTimer)
+};

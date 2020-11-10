@@ -32,3 +32,13 @@ void memcpy(void* pDestination, const void* pSource, memsize_t uiSize) {
         }
     }
 }
+
+bool cMemoryManager::Init() {
+    this->pbInitialized = true;
+    return true;
+}
+
+bool cMemoryManager::Destroy() {
+    this->pbInitialized = false;
+    return true;
+}

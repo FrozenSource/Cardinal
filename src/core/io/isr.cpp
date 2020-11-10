@@ -43,9 +43,11 @@ const cstring exception_messages[] = {
     "Reserved"
 };
 
-void isr_init()
-{
-// start initialization
+void isr_init() {
+    static bool gbISR_Init = false;
+    if (gbISR_Init) return;
+
+    // start initialization
     port_byte_out(PIC1, 0x11);
     port_byte_out(PIC2, 0x11);
 
@@ -105,11 +107,19 @@ void isr_init()
     set_idt_gate(IRQ4, (uint64_t) irq4);
     
     set_idt();
+    
+    gbISR_Init = true;
 }
 
 void irq_init()
 {
+    static bool gbIRQ_Init = false;
+    if (gbIRQ_Init) return;
+
+    isr_init();
     __asm__("sti");
+
+    gbIRQ_Init = true;
 }
 
 void isr_handler(uint64_t id, UNUSED uint64_t stack)
@@ -136,5 +146,6 @@ void irq_handler(uint64_t id, uint64_t stack)
 
 void register_interrupt_handler(uint64_t id, isr_t handler)
 {
+    irq_init();
     interrupt_handlers[id] = handler;
 }

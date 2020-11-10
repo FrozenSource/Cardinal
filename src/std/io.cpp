@@ -69,10 +69,10 @@ char* convert(unsigned int num, int base)
 
 void putchar(char c)
 {
-    screen_printc(c);
+    cStaticTerminalDriver::Get().Print(c);
 }
 
 void puts(char *s)
 {
-    screen_print(s);
+    cStaticTerminalDriver::Get().Print((cstring)s);
 }

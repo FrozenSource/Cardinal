@@ -3,29 +3,46 @@
 #include <core/memory/locations.h>
 #include <std/types.h>
 #include <core/memory/memory.h>
+#include <std/core.h>
+#include <drivers/driver.h>
 
-static const uint8_t COLOR_BLACK         = 0;
-static const uint8_t COLOR_BLUE          = 1;
-static const uint8_t COLOR_GREEN         = 2;
-static const uint8_t COLOR_CYAN          = 3;
-static const uint8_t COLOR_RED           = 4;
-static const uint8_t COLOR_MAGENTA       = 5;
-static const uint8_t COLOR_BROWN         = 6;
-static const uint8_t COLOR_LIGHT_GREY    = 7;
-static const uint8_t COLOR_DARK_GREY     = 8;
-static const uint8_t COLOR_LIGHT_BLUE    = 9;
-static const uint8_t COLOR_LIGHT_GREEN   = 10;
-static const uint8_t COLOR_LIGHT_CYAN    = 11;
-static const uint8_t COLOR_LIGHT_RED     = 12;
-static const uint8_t COLOR_LIGHT_MAGENTA = 13;
-static const uint8_t COLOR_LIGHT_BROWN   = 14;
-static const uint8_t COLOR_WHITE         = 15;
+enum eTerminalColor : uint8_t {
+    BLACK         = 0,
+    BLUE          = 1,
+    GREEN         = 2,
+    CYAN          = 3,
+    RED           = 4,
+    MAGENTA       = 5,
+    BROWN         = 6,
+    LIGHT_GREY    = 7,
+    DARK_GREY     = 8,
+    LIGHT_BLUE    = 9,
+    LIGHT_GREEN   = 10,
+    LIGHT_CYAN    = 11,
+    LIGHT_RED     = 12,
+    LIGHT_MAGENTA = 13,
+    LIGHT_BROWN   = 14,
+    WHITE         = 15
+};
 
-void screen_init();
-void screen_clear();
-void screen_line(const cstring str);
-void screen_print(const cstring str);
-void screen_printc(char c);
-void screen_print_line(const cstring str);
-uint8_t color_scheme(uint8_t fg, uint8_t bg);
-void move_cursor(uint16_t pos);
+class cStaticTerminalDriver : public IDriver {
+public:
+    bool Init();
+    bool Destroy();
+
+    void Print(cstring sStr);
+    void Print(char cCharacter);
+    void SetColoring(eTerminalColor eColor);
+    void Clear();
+
+    static eTerminalColor TerminalFromFGBG(eTerminalColor eForeground, eTerminalColor eBackground);
+protected:
+    static uint32_t OffsetFromCoords(uint32_t uiX, uint32_t uiY);
+private:
+    uint8_t peColorScheme;
+    byte* ppFrameBuffer;
+    uint32_t puiCurrentColumn;
+    uint32_t puiCurrentRow;
+
+    SINGLETON(cStaticTerminalDriver)
+};

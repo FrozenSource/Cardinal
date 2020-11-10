@@ -18,13 +18,9 @@ static void keyboard_callback(UNUSED uint64_t stack)
 }
 
 bool cStaticKeyBoardDriver::Init() {
+    if (IsInitialized()) return true;
+    
     register_interrupt_handler(IRQ1, keyboard_callback);
     this->pbInitialized = true;
     return true;
-}
-
-cStaticKeyBoardDriver cStaticKeyBoardDriver::poKeyBoard = {};
-
-cStaticKeyBoardDriver& cStaticKeyBoardDriver::Get() {
-    return cStaticKeyBoardDriver::poKeyBoard;
 }

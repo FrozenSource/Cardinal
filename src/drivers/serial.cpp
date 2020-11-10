@@ -55,7 +55,6 @@ uint32_t cSerialPort::serial_is_transmit_fifo_empty(uint32_t com)
     return port_byte_in(SERIAL_LINE_STATUS_PORT(com)) & 0x20;
 }
 
-uint32_t cSerialPort::serial_received(uint32_t com)
-{
+uint32_t cSerialPort::serial_received(uint32_t com) {
     return port_byte_in(SERIAL_LINE_STATUS_PORT(com)) & 1;
 }
