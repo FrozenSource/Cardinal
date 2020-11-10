@@ -11,22 +11,24 @@ void printf(cstring format, ...)
     va_start(arg, format);
 
     int i_val;
+    double d_val;
     for (memsize_t i = 0; i < strlen(format); i++) {
         char c = format[i];
 
         if (c == '%') {
             switch (format[i + 1]) {
                 case 'c':
-                    putchar(va_arg(arg, int));
+                    putchar(va_arg(arg, char));
+                    break;
+
+                case 'i':
+                    i_val = va_arg(arg, int);
+                    puts(itoa(i_val));
                     break;
 
                 case 'd':
-                    i_val = va_arg(arg, int);
-                    if (i_val < 0) {
-                        i_val = -i_val;
-                        putchar('-');
-                    }
-                    puts(itoa(i_val));
+                    d_val = va_arg(arg, double);
+                    puts(dtoa(d_val, 2));
                     break;
 
                 case 'x':

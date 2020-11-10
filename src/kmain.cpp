@@ -21,8 +21,9 @@ extern "C" void kmain()
 
     float f = 333.715f;
     double d = -9.4;
-    printf("f: %s\n", dtoa(f, 6));
-    printf("d: %s\n", dtoa(d, 255));
+    printf("i: %i\n", -1);
+    printf("f: %d\n", f);
+    printf("d: %d\n", d);
 
     cStaticTimer::Get().Init();
     cStaticKeyBoardDriver::Get().Init();
