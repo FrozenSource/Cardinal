@@ -1,11 +1,10 @@
 #include <drivers/keyboard.h>
-#include <std/types.h>
 #include <std/io.h>
 #include <core/io/isr.h>
-#include <std/convert.h>
 #include <core/io/ports.h>
 
 #define SCANCODE_MAX 57
+#define KEYBOARD_DATA_PORT 0x60
 
 static void keyboard_callback(UNUSED uint64_t stack)
 {
@@ -18,7 +17,14 @@ static void keyboard_callback(UNUSED uint64_t stack)
     printf("Received: %d\n", scancode);
 }
 
-void keyboard_init()
-{
+bool cStaticKeyBoardDriver::Init() {
     register_interrupt_handler(IRQ1, keyboard_callback);
+    this->pbInitialized = true;
+    return true;
+}
+
+cStaticKeyBoardDriver cStaticKeyBoardDriver::poKeyBoard = {};
+
+cStaticKeyBoardDriver& cStaticKeyBoardDriver::Get() {
+    return cStaticKeyBoardDriver::poKeyBoard;
 }

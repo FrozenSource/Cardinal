@@ -10,7 +10,7 @@ public:
 
     virtual bool Destroy() = 0;
 
-private:
+protected:
     bool pbInitialized = false;
 };
 

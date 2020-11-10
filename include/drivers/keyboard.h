@@ -1,4 +1,14 @@
 #pragma once
 
-#define KEYBOARD_DATA_PORT 0x60
-void keyboard_init();
+#include <drivers/driver.h>
+
+class cStaticKeyBoardDriver : public IDriver {
+public:
+    bool Init();
+    bool Destroy() { this->pbInitialized = false; return true; }
+    static cStaticKeyBoardDriver& Get();
+protected:
+
+private:
+    static cStaticKeyBoardDriver poKeyBoard;
+};

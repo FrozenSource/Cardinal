@@ -24,11 +24,11 @@ extern "C" void kmain()
     screen_print_line("ISQ initialized.");
 
     timer_init(50);
-    serial_init(SERIAL_COM1, SERIAL_SPEED_115200);
-    keyboard_init();
+    cStaticKeyBoardDriver& oKeyBoard = cStaticKeyBoardDriver::Get();
+    oKeyBoard.Init();
 
-    serial_write(SERIAL_COM1, 'h');
-
+    cSerialPort oPort(eSerialPort::COM1, eSerialBaud::RATE_115200);
+    oPort.Write("hallo");
 
     while (1) {
         __asm__("hlt");
