@@ -11,6 +11,7 @@ void printf(cstring format, ...)
     va_start(arg, format);
 
     int i_val;
+    uint32_t u_val;
     double d_val;
     for (memsize_t i = 0; i < strlen(format); i++) {
         char c = format[i];
@@ -22,8 +23,13 @@ void printf(cstring format, ...)
                     break;
 
                 case 'i':
-                    i_val = va_arg(arg, int);
-                    puts(itoa(i_val));
+                    i_val = va_arg(arg, int32_t);
+                    puts(itoa(i_val, 10));
+                    break;
+                
+                case 'u':
+                    u_val = va_arg(arg, uint32_t);
+                    puts(itoa(u_val, 10));
                     break;
 
                 case 'd':
@@ -32,8 +38,8 @@ void printf(cstring format, ...)
                     break;
 
                 case 'x':
-                    i_val = va_arg(arg, unsigned int);
-                    puts(convert(i_val, 16));
+                    i_val = va_arg(arg, uint32_t);
+                    puts(itoa(i_val, 16));
                     break;
 
                 case 's':
@@ -48,23 +54,6 @@ void printf(cstring format, ...)
     }
 
     va_end(arg);
-}
-
-char* convert(unsigned int num, int base)
-{
-    char representation[] = "0123456789ABCDEF";
-    char buffer[50];
-    char *ret;
-
-    ret = &buffer[49];
-    *ret = '\0';
-
-    do {
-        *--ret = representation[num % base];
-        num /= base;
-    } while(num != 0);
-
-    return ret;
 }
 
 void putchar(char c)

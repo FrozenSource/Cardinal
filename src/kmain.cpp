@@ -10,12 +10,16 @@
 #include <std/convert.h>
 #include <std/string.h>
 
-extern "C" void kmain()
+C_FUNCTION void kmain(unsigned long magic, unsigned long addr) __asm__("kmain");
+C_FUNCTION void kmain(unsigned long magic, unsigned long addr)
 {
     cStaticTerminalDriver::Get().Clear();
     printf("CardinalOS\n");
     printf("Kernel version: %s\n", VERSION_STR);
     printf("Build on %s at %s\n", __DATE__, __TIME__);
+
+    printf("Magic: 0x%x\n", magic);
+    printf("Addr: 0x%x\n", addr);
 
     Setup_Interrupts();
 

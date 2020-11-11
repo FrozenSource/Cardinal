@@ -2,14 +2,14 @@
 
 #include <std/types.h>
 
-cstring itoa(int iValue);
+char* itoa(int32_t iValue, int32_t iBase);
 
 template <typename T>
 cstring dtoa(T value, uint8_t uiDecimals) {
     static char dtoaBuffer[258]; // max uint8_t + '.' + \0
 
     cstring sBuffer = dtoaBuffer;
-    cstring sMajor = itoa((int)value);
+    cstring sMajor = itoa((int)value, 10);
 
     if (value < 0) value *= -1;
 
