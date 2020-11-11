@@ -11,7 +11,7 @@ set(CMAKE_CXX_COMPILER x86_64-elf-g++)
 set(CMAKE_LD x86_64-elf-ld)
 set(CMAKE_AR x86_64-elf-ar)
 
-set(COMPILER_FLAGS "-W -Wall -pedantic -std=c++17 -O2 -ffreestanding -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -fno-rtti -fno-threadsafe-statics -mno-red-zone -Wwrite-strings")
+set(COMPILER_FLAGS "-W -Wall -Wwrite-strings -pedantic -std=c++17 -O2 -ffreestanding -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -fno-rtti -fno-threadsafe-statics -mno-red-zone")
 set(CMAKE_LINK_OBJECTS "<CMAKE_LD> --nmagic --script=${PROJECT_SOURCE_DIR}/linker.ld <OBJECTS> -o ${PROJECT_SOURCE_DIR}/iso/boot/kernel.bin <LINK_LIBRARIES>")
 set(CMAKE_AR_OBJECTS "<CMAKE_AR> rcs <TARGET> <OBJECTS>")
 
@@ -53,7 +53,7 @@ set(HEADERS
         ${PROJECT_SOURCE_DIR}/include/debug.h
         ${PROJECT_SOURCE_DIR}/include/Version.h
 # boot
-        ${PROJECT_SOURCE_DIR}/include/boot.h
+        ${PROJECT_SOURCE_DIR}/include/core/boot.h
 # std
         ${PROJECT_SOURCE_DIR}/include/std/string.h
         ${PROJECT_SOURCE_DIR}/include/std/convert.h
@@ -95,7 +95,7 @@ set(SOURCES
 set(KERNEL_OUTPUT ${PROJECT_SOURCE_DIR}/iso/boot/${KERNEL_NAME})
 
 set(LINKER_FILE ${PROJECT_SOURCE_DIR}/src/linker/linker.ld)
-add_library(${KERNEL_NAME} STATIC ${SOURCES})
+add_library(${KERNEL_NAME} STATIC ${HEADERS} ${SOURCES})
 target_include_directories(${KERNEL_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # Link static to binary elf64

@@ -33,11 +33,12 @@ public:
     void Print(cstring sStr);
     void Print(char cCharacter);
     void SetColoring(eTerminalColor eColor);
+    void SetCursorPosition(uint8_t uiX, uint8_t uiY);
     void Clear();
 
     static eTerminalColor TerminalFromFGBG(eTerminalColor eForeground, eTerminalColor eBackground);
 protected:
-    static uint32_t OffsetFromCoords(uint32_t uiX, uint32_t uiY);
+    static uint16_t OffsetFromCoords(uint8_t uiX, uint8_t uiY);
 private:
     uint8_t peColorScheme;
     byte* ppFrameBuffer;

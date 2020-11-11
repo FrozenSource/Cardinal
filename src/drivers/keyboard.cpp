@@ -6,15 +6,14 @@
 #define SCANCODE_MAX 57
 #define KEYBOARD_DATA_PORT 0x60
 
-static void keyboard_callback(UNUSED uint64_t stack)
-{
+static void keyboard_callback(UNUSED uint64_t stack) {
     uint8_t scancode = port_byte_in(KEYBOARD_DATA_PORT);
 
     if (scancode > SCANCODE_MAX) {
         return;
     }
 
-    printf("Received: %d\n", scancode);
+    printf("Received: %i\n", scancode);
 }
 
 bool cStaticKeyBoardDriver::Init() {
