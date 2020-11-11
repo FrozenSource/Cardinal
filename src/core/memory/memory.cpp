@@ -1,4 +1,5 @@
 #include <core/memory/memory.h>
+#include <core/boot.h>
 
 void memset(byte* pAddress, byte bValue, memsize_t uiSize) {
     while(uiSize--) {
@@ -34,6 +35,11 @@ void memcpy(void* pDestination, const void* pSource, memsize_t uiSize) {
 }
 
 bool cMemoryManager::Init() {
+    cSystemInformationProvider& oSystemInf = cSystemInformationProvider::Get();
+    if (!oSystemInf.IsInitialized()) {
+        
+    }
+
     this->pbInitialized = true;
     return true;
 }

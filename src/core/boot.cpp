@@ -7,10 +7,6 @@
 /* This should be in %eax. */
 #define MULTIBOOT2_BOOTLOADER_MAGIC		0x36d76289
 
-/* Memory defs. */
-#define MULTIBOOT_MEMORY_AVAILABLE  1
-#define MULTIBOOT_MEMORY_RESERVED   2
-
 /* ELF defs. */
 #define MULTIBOOT_ELF_SECTION_TYPE_NULL 0
 
@@ -63,13 +59,6 @@ struct multiboot_tag_string_t {
     char string[];
 };
 
-struct multiboot_tag_basic_meminfo_t {
-    uint32_t type;
-    uint32_t size;
-    uint32_t mem_lower;
-    uint32_t mem_upper;
-};
-
 struct multiboot_tag_bootdev_t {
     uint32_t type;
     uint32_t size;
@@ -78,18 +67,10 @@ struct multiboot_tag_bootdev_t {
     uint32_t part;
 };
 
-struct multiboot_tag_module_t {
-    uint32_t type;
-    uint32_t size;
-    uint32_t mod_start;
-    uint32_t mod_end;
-    char cmdline[];
-};
-
 struct multiboot_mmap_entry_t {
     uint64_t addr;
     uint64_t len;
-    uint32_t type;
+    eMemoryType type;
     uint32_t zero;
 };
 
@@ -99,12 +80,6 @@ struct multiboot_tag_mmap_t {
     uint32_t entry_size;
     uint32_t entry_version;
     multiboot_mmap_entry_t entries[];
-};
-
-struct multiboot_tag_network_t {
-    uint32_t type;
-    uint32_t size;
-    uint8_t dhcpack[];
 };
 
 struct multiboot_elf_sections_entry_t {
@@ -128,111 +103,51 @@ struct multiboot_tag_elf_sections_t {
     multiboot_elf_sections_entry_t entries[];
 };
 
-bool cStaticBootProvider::Init(uint64_t ulMagic, uint64_t ulAddr) {
+bool cSystemInformationProvider::Init(uint64_t ulMagic, uint64_t ulMBIBegin) {
     this->pulMagic = ulMagic;
-    this->pulAddr = ulAddr;
-    return Init();
-}
+    this->pulMBIBegin = ulMBIBegin;
 
-bool cStaticBootProvider::Init() {
-    this->pbInitialized = true;
-    return true;
-}
-
-bool cStaticBootProvider::Destroy() {
-    this->pbInitialized = false;
-    return true;
-}
-
-bool cStaticBootProvider::IsBootOk() {
-    if (!IsInitialized()) return false;
-
+    // Check the magic number for multiboot.
     if (this->pulMagic != MULTIBOOT2_BOOTLOADER_MAGIC) {
         printf("Invalid magic number: 0x%x\n", this->pulMagic);
         return false;
     }
-
-    if (this->pulAddr & 7) {
-        printf("Unaligned MBI: 0x%x\n", this->pulAddr);
+    if (this->pulMBIBegin & 7) {
+        printf("Misaligned MBI: 0x%x\n", this->pulMBIBegin);
         return false;
     }
 
-    return true;
-}
-
-void cStaticBootProvider::GetBootInfo() {
-    multiboot_tag_t *tag;
-
-    uint64_t ulKernelStart = -1;
-    uint64_t ulKernelEnd = 0;
-
-    printf("announced MBI size 0x%x\n", *(unsigned *) this->pulAddr);
-
-    for (
-        tag = (multiboot_tag_t *) (this->pulAddr + 8);
-        tag->type != MULTIBOOT_TAG_TYPE_END;
-        tag = (multiboot_tag_t *) ((uint8_t *) tag + ((tag->size + 7) & ~7))
-    ) {
-        switch (tag->type) {
+    multiboot_tag_t *pTag = (multiboot_tag_t *) (this->pulMBIBegin + 8);
+    do {
+        switch (pTag->type) {
             case MULTIBOOT_TAG_TYPE_CMDLINE:
-                printf("Command line = %s\n", ((multiboot_tag_string_t *) tag)->string);
+                this->psBootCommandLine = ((multiboot_tag_string_t *) pTag)->string;
                 break;
             case MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME:
-                printf("Boot loader name = %s\n", ((multiboot_tag_string_t *) tag)->string);
-                break;
-            case MULTIBOOT_TAG_TYPE_MODULE:
-                printf(
-                    "Module at 0x%x-0x%x. command line %s\n",
-                    ((multiboot_tag_module_t *) tag)->mod_start,
-                    ((multiboot_tag_module_t *) tag)->mod_end,
-                    ((multiboot_tag_module_t *) tag)->cmdline
-                );
-                break;
-            case MULTIBOOT_TAG_TYPE_BASIC_MEMINFO:
-                printf(
-                    "mem_lower = %dKB, mem_upper = %iKB\n",
-                    ((multiboot_tag_basic_meminfo_t *) tag)->mem_lower,
-                    ((multiboot_tag_basic_meminfo_t *) tag)->mem_upper
-                );
+                this->psBootLoaderName = ((multiboot_tag_string_t *) pTag)->string;
                 break;
             case MULTIBOOT_TAG_TYPE_BOOTDEV:
-                printf(
-                    "Boot device 0x%x,%u,%u\n",
-                    ((multiboot_tag_bootdev_t *) tag)->biosdev,
-                    ((multiboot_tag_bootdev_t *) tag)->slice,
-                    ((multiboot_tag_bootdev_t *) tag)->part
-                );
+                this->paDevices[this->puiDeviceCount].uiDeviceId = ((multiboot_tag_bootdev_t *) pTag)->biosdev;
+                this->paDevices[this->puiDeviceCount].uiSlice = ((multiboot_tag_bootdev_t *) pTag)->slice;
+                this->paDevices[this->puiDeviceCount].uiPart = ((multiboot_tag_bootdev_t *) pTag)->part;
+                this->puiDeviceCount++;
                 break;
             case MULTIBOOT_TAG_TYPE_MMAP:
                 {
                     multiboot_mmap_entry_t *mmap;
                     for (
-                        mmap = ((multiboot_tag_mmap_t *) tag)->entries;
-                        (uint8_t *) mmap < (uint8_t *) tag + tag->size;
-                        mmap = (multiboot_mmap_entry_t *) ((unsigned long) mmap + ((multiboot_tag_mmap_t *) tag)->entry_size)
+                        mmap = ((multiboot_tag_mmap_t *) pTag)->entries;
+                        (uint8_t *) mmap < (uint8_t *) pTag + pTag->size;
+                        mmap = (multiboot_mmap_entry_t *) ((unsigned long) mmap + ((multiboot_tag_mmap_t *) pTag)->entry_size)
                     ) {
-                        printf(
-                            "mmap base_addr = 0x%x%x, length = 0x%x%x, type = 0x%x\n",
-                            (unsigned) (mmap->addr >> 32),
-                            (unsigned) (mmap->addr & 0xffffffff),
-                            (unsigned) (mmap->len >> 32),
-                            (unsigned) (mmap->len & 0xffffffff),
-                            (unsigned) mmap->type
-                        );
+                        this->paMemorySections[this->puiMemorySectionCount].pAddress = mmap->addr;
+                        this->paMemorySections[this->puiMemorySectionCount].ulLength = mmap->len;
+                        this->paMemorySections[this->puiMemorySectionCount].eType = mmap->type;
+                        this->paMemorySections[this->puiMemorySectionCount].uiAttributes = mmap->zero;
+                        this->puiMemorySectionCount++;
+                        this->pulTotalMemorySize += mmap->len;
                     }
                 }
-                break;
-            case MULTIBOOT_TAG_TYPE_FRAMEBUFFER:
-                printf("%s\n", "Framebuffer");
-                break;
-            case MULTIBOOT_TAG_TYPE_APM:
-                printf("%s\n", "Apm");
-                break;
-            case MULTIBOOT_TAG_TYPE_ACPI_OLD:
-                printf("%s\n", "Acpi old");
-                break;
-            case MULTIBOOT_TAG_TYPE_ACPI_NEW:
-                printf("%s\n", "Acpi new");
                 break;
             case MULTIBOOT_TAG_TYPE_ELF_SECTIONS:
                 {
@@ -240,51 +155,49 @@ void cStaticBootProvider::GetBootInfo() {
                     uint32_t uiIndex;
                     for (
                         uiIndex = 0,
-                        elf = ((multiboot_tag_elf_sections_t *) tag)->entries;
-                        uiIndex < ((multiboot_tag_elf_sections_t *) tag)->num;
-                        elf = (multiboot_elf_sections_entry_t *) ((uint64_t) elf + ((multiboot_tag_elf_sections_t *) tag)->section_size),
+                        elf = ((multiboot_tag_elf_sections_t *) pTag)->entries;
+                        uiIndex < ((multiboot_tag_elf_sections_t *) pTag)->num;
+                        elf = (multiboot_elf_sections_entry_t *) ((uint64_t) elf + ((multiboot_tag_elf_sections_t *) pTag)->section_size),
                         uiIndex++
                     ) {
-                        printf(
-                            "elf section #%i addr = 0x%x, type = 0x%x, size = 0x%x, flags = 0x%x\n",
-                            uiIndex,
-                            (unsigned) (elf->addr >> 32),
-                            (unsigned) (elf->addr & 0xffffffff),
-                            elf->type,
-                            (unsigned) (elf->size >> 32),
-                            (unsigned) (elf->size & 0xffffffff),
-                            elf->flags
-                        );
+                        this->paELFSections[this->puiELFSectionCount].pAddress = elf->addr;
+                        this->paELFSections[this->puiELFSectionCount].eType = elf->type;
+                        this->paELFSections[this->puiELFSectionCount].ulSize = elf->size;
+                        this->paELFSections[this->puiELFSectionCount].uiFlags = elf->flags;
+                        this->puiELFSectionCount++;
 
                          if (elf->type == MULTIBOOT_ELF_SECTION_TYPE_NULL) {
                             continue;
                         }
 
-                        if (((uint64_t) (elf->addr)) < ulKernelStart) {
-                            ulKernelStart = (uint64_t) elf->addr;
+                        if (((uint64_t) (elf->addr)) < this->pulKernelStart) {
+                            this->pulKernelStart = (uint64_t) elf->addr;
                         }
 
-                        if (((uint64_t) (elf->addr)) + elf->size > ulKernelEnd) {
-                            ulKernelEnd = (uint64_t) elf->addr;
-                            ulKernelEnd += elf->size;
+                        if (((uint64_t) (elf->addr)) + elf->size > this->pulKernelEnd) {
+                            this->pulKernelEnd = (uint64_t) elf->addr;
+                            this->pulKernelEnd += elf->size;
                         }
                     }
                 }
                 break;
-            case MULTIBOOT_TAG_TYPE_NETWORK:
-                printf("%s\n", "Network");
-                break;
-            case MULTIBOOT_TAG_TYPE_LOAD_BASE_ADDR:
-                printf("%s\n", "Load base addr");
-                break;
-            default:
-                printf("Tag 0x%x, size 0x%x\n", tag->type, tag->size);
         }
-    }
-    
-    tag = (multiboot_tag_t *) ((uint8_t *) tag + ((tag->size + 7) & ~7));
-    printf("Total MBI size 0x%x\n", (unsigned long) tag - this->pulAddr);
+        
+        pTag = (multiboot_tag_t *) ((uint8_t *) pTag + ((pTag->size + 7) & ~7));
+    } while (pTag->type != MULTIBOOT_TAG_TYPE_END);
 
-    printf("kernel start = 0x%x, kernel end = 0x%x\n", (ulKernelStart >> 32), (ulKernelEnd >> 32));
-    printf("multiboot start = 0x%x, multiboot end = 0x%x\n", this->pulAddr, tag);
+    pTag = (multiboot_tag_t *) ((uint8_t *) pTag + ((pTag->size + 7) & ~7));
+    this->pulMBIEnd = (uint64_t) pTag - this->pulMBIBegin;
+
+    return Init();
+}
+
+bool cSystemInformationProvider::Init() {
+    this->pbInitialized = true;
+    return true;
+}
+
+bool cSystemInformationProvider::Destroy() {
+    this->pbInitialized = false;
+    return true;
 }

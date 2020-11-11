@@ -62,3 +62,16 @@ cstring dtoa(T value, uint8_t uiDecimals) {
 
     return dtoaBuffer;
 }
+
+enum eByteSize : uint8_t {
+    BYTES = 0,
+    KILOBYTES = 1,
+    MEGABYTES = 2,
+    GIGABYTES = 3,
+    TERABYTES = 4,
+    PETABYTES = 5,
+    ETABYTES = 6,
+    AUTO = 7
+};
+
+cstring formatBytes(uint64_t ulSize, uint8_t uiDecimals = 2, eByteSize eMaxFormat = eByteSize::AUTO);

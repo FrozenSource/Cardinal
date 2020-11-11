@@ -11,21 +11,31 @@
 #include <std/string.h>
 #include <core/boot.h>
 
-C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulAddr) __asm__("kmain");
-C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulAddr)
+C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin) __asm__("kmain");
+C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
 {
     cStaticTerminalDriver::Get().Clear();
     printf("CardinalOS\n");
     printf("Kernel version: %s\n", VERSION_STR);
     printf("Build on %s at %s\n", __DATE__, __TIME__);
 
-    cStaticBootProvider& oBootProvider = cStaticBootProvider::Get();
-    oBootProvider.Init(ulMagic, ulAddr);
-    if (!oBootProvider.IsBootOk()) {
+    cSystemInformationProvider& oSystemInf = cSystemInformationProvider::Get();
+    if (!oSystemInf.Init(ulMagic, ulMBIBegin)) {
         printf("System halted!");
         return;
     }
-    oBootProvider.GetBootInfo();
+
+    uint64_t ulTotalMemory = oSystemInf.GetTotalMemorySize(), ulUsedMemory = 0;
+    for (uint8_t uiIndex = 0; uiIndex < oSystemInf.GetMemorySectionCount(); uiIndex++) {
+        tMemorySection& oSection = oSystemInf.GetMemorySection(uiIndex);
+        if (oSection.eType != eMemoryType::AVAILABLE) {
+            ulUsedMemory += oSection.ulLength;
+            continue;
+        }
+    }
+    printf("Total Memory:   %s\n", formatBytes(ulTotalMemory, 2, eByteSize::MEGABYTES));
+    printf("Used Memory:    %s\n", formatBytes(ulUsedMemory, 2, eByteSize::MEGABYTES));
+    printf("Free Memory:    %s\n", formatBytes(ulTotalMemory - ulUsedMemory, 2, eByteSize::MEGABYTES));
 
     Setup_Interrupts();
 

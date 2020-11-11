@@ -1,1 +1,1 @@
-call qemu-system-x86_64 -cdrom ./build/os.iso -serial file:./serial.log
+call qemu-system-x86_64 -m 5G -cdrom ./build/os.iso -serial file:./serial.log
