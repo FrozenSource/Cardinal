@@ -5,63 +5,73 @@
 #include <drivers/screen.h>
 #include <std/convert.h>
 
-void printf(cstring format, ...)
+void printf(cstring sFormat, ...)
 {
-    va_list arg;
-    va_start(arg, format);
+    va_list aArgs;
+    va_start(aArgs, sFormat);
 
-    int i_val;
-    uint32_t u_val;
-    double d_val;
-    for (memsize_t i = 0; i < strlen(format); i++) {
-        char c = format[i];
+    int64_t ilValue;
+    uint64_t ulValue;
+    double dValue;
+    for (memsize_t uiIndex = 0; uiIndex < strlen(sFormat); uiIndex++) {
+        char cCharacter = sFormat[uiIndex];
 
-        if (c == '%') {
-            switch (format[i + 1]) {
+        if (cCharacter == '%') {
+            switch (sFormat[uiIndex + 1]) {
                 case 'c':
-                    putchar(va_arg(arg, char));
+                    putchar(va_arg(aArgs, int64_t));
                     break;
 
                 case 'i':
-                    i_val = va_arg(arg, int32_t);
-                    puts(itoa(i_val, 10));
+                    ilValue = va_arg(aArgs, uint64_t);
+                    puts(itoa(ilValue, 10));
                     break;
                 
                 case 'u':
-                    u_val = va_arg(arg, uint32_t);
-                    puts(itoa(u_val, 10));
+                    ulValue = va_arg(aArgs, uint64_t);
+                    puts(itoa(ulValue, 10));
                     break;
 
                 case 'd':
-                    d_val = va_arg(arg, double);
-                    puts(dtoa(d_val, 2));
+                    dValue = va_arg(aArgs, double);
+                    puts(dtoa(dValue, 2));
                     break;
 
                 case 'x':
-                    i_val = va_arg(arg, uint32_t);
-                    puts(itoa(i_val, 16));
+                    ilValue = va_arg(aArgs, uint64_t);
+                    puts(itoa(ilValue, 16));
                     break;
 
                 case 's':
-                    puts(va_arg(arg, char *));
+                    puts(va_arg(aArgs, cstring));
+                    break;
+
+                case 'b':
+                    ilValue = va_arg(aArgs, int);
+                    
+                    if (ilValue == true) {
+                        puts("true");
+                    } else {
+                        puts("false");
+                    }
                     break;
             }
 
-            i++;
+            uiIndex++;
         } else {
-            putchar(c);
+            putchar(cCharacter);
         }
     }
 
-    va_end(arg);
+    va_end(aArgs);
 }
 
-void putchar(char c)
+void putchar(char cCharacter)
 {
-    cStaticTerminalDriver::Get().Print(c);
+    cStaticTerminalDriver::Get().Print(cCharacter);
 }
 
-void puts(char *s)
+void puts(cstring sStr)
 {
-    cStaticTerminalDriver::Get().Print((cstring)s);
+    cStaticTerminalDriver::Get().Print(sStr);
 }

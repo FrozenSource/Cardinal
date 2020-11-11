@@ -75,6 +75,7 @@ set(SOURCES
         ${PROJECT_SOURCE_DIR}/src/boot/boot.asm
         ${PROJECT_SOURCE_DIR}/src/boot/long_mode.asm
         ${PROJECT_SOURCE_DIR}/src/boot/interrupts.asm
+        ${PROJECT_SOURCE_DIR}/src/core/boot.cpp
 # std
         ${PROJECT_SOURCE_DIR}/src/std/string.cpp
         ${PROJECT_SOURCE_DIR}/src/std/convert.cpp

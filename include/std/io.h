@@ -1,8 +1,8 @@
 #pragma once
 #include <std/types.h>
 
-void printf(cstring format, ...);
+void printf(cstring sFormat, ...);
 
-void putchar(char c);
+void putchar(char cCharacter);
 
-void puts(char *s);
+void puts(cstring sStr);

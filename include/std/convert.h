@@ -1,8 +1,39 @@
 #pragma once
 
 #include <std/types.h>
+#include <std/string.h>
 
-char* itoa(int32_t iValue, int32_t iBase);
+template <typename T>
+cstring itoa(T iValue, uint32_t uiBase) {
+    static char itoaBuffer[256];
+
+    uint32_t uiIndex = 0;
+    T iOriginal;
+
+    if (iValue == 0)
+    {
+        itoaBuffer[uiIndex++] = '0';
+        itoaBuffer[uiIndex] = '\0';
+        return &itoaBuffer[0];
+    }
+
+    if ((iOriginal = iValue) < 0 && uiBase == 10) {
+        iValue = -iValue;
+    }
+
+    do {
+        uint32_t iMod = iValue % uiBase;
+        itoaBuffer[uiIndex++] = (iMod < 10) ? iMod + '0' : iMod + 'a' - 10;
+    } while ((iValue /= uiBase) > 0);
+
+    if (iOriginal < 0 && uiBase == 10) {
+        itoaBuffer[uiIndex++] = '-';
+    }
+
+    itoaBuffer[uiIndex] = '\0';
+    reverse(itoaBuffer);
+    return &itoaBuffer[0];
+}
 
 template <typename T>
 cstring dtoa(T value, uint8_t uiDecimals) {

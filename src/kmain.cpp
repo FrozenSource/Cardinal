@@ -9,25 +9,25 @@
 #include <std/io.h>
 #include <std/convert.h>
 #include <std/string.h>
+#include <core/boot.h>
 
-C_FUNCTION void kmain(unsigned long magic, unsigned long addr) __asm__("kmain");
-C_FUNCTION void kmain(unsigned long magic, unsigned long addr)
+C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulAddr) __asm__("kmain");
+C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulAddr)
 {
     cStaticTerminalDriver::Get().Clear();
     printf("CardinalOS\n");
     printf("Kernel version: %s\n", VERSION_STR);
     printf("Build on %s at %s\n", __DATE__, __TIME__);
 
-    printf("Magic: 0x%x\n", magic);
-    printf("Addr: 0x%x\n", addr);
+    cStaticBootProvider& oBootProvider = cStaticBootProvider::Get();
+    oBootProvider.Init(ulMagic, ulAddr);
+    if (!oBootProvider.IsBootOk()) {
+        printf("System halted!");
+        return;
+    }
+    oBootProvider.GetBootInfo();
 
     Setup_Interrupts();
-
-    float f = 333.715f;
-    double d = -9.4;
-    printf("i: %i\n", -1);
-    printf("f: %d\n", f);
-    printf("d: %d\n", d);
 
     cStaticTimer::Get().Init();
     cStaticKeyBoardDriver::Get().Init();
