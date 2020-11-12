@@ -49,6 +49,8 @@ public:
 	uint64_t GetKernelSize() { return this->pulKernelEnd - this->pulKernelStart; };
 	byte* GetKernelBegin() { return (byte*) this->pulKernelStart; };
 	byte* GetKernelEnd() { return (byte*) this->pulKernelEnd; };
+	byte* GetBootSectionBegin() { return (byte*) this->pulMBIBegin; };
+	byte* GetBootSectionEnd() { return (byte*) this->pulMBIEnd; };
 
 	cstring GetBootLoaderName() { return this->psBootLoaderName; }
 	cstring GetCommandLine() { return this->psBootCommandLine; }

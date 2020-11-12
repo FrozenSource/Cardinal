@@ -40,24 +40,24 @@ struct multiboot_header_t
     uint32_t architecture;
     uint32_t header_length;
     uint32_t checksum;
-};
+} PACKED;
 
 struct multiboot_header_tag_t {
   uint16_t type;
   uint16_t flags;
   uint32_t size;
-};
+} PACKED;
 
 struct multiboot_tag_t {
     uint32_t type;
     uint32_t size;
-};
+} PACKED;
 
 struct multiboot_tag_string_t {
     uint32_t type;
     uint32_t size;
     char string[];
-};
+} PACKED;
 
 struct multiboot_tag_bootdev_t {
     uint32_t type;
@@ -65,14 +65,14 @@ struct multiboot_tag_bootdev_t {
     uint32_t biosdev;
     uint32_t slice;
     uint32_t part;
-};
+} PACKED;
 
 struct multiboot_mmap_entry_t {
     uint64_t addr;
     uint64_t len;
     eMemoryType type;
     uint32_t zero;
-};
+} PACKED;
 
 struct multiboot_tag_mmap_t {
     uint32_t type;
@@ -80,11 +80,12 @@ struct multiboot_tag_mmap_t {
     uint32_t entry_size;
     uint32_t entry_version;
     multiboot_mmap_entry_t entries[];
-};
+} PACKED;
 
 struct multiboot_elf_sections_entry_t {
+    uint32_t name;
     uint32_t type;
-    uint32_t flags;
+    uint64_t flags;
     uint64_t addr;
     uint64_t offset;
     uint64_t size;
@@ -92,7 +93,7 @@ struct multiboot_elf_sections_entry_t {
     uint32_t info;
     uint64_t alignment;
     uint64_t entry_size;
-};
+} PACKED;
 
 struct multiboot_tag_elf_sections_t {
     uint32_t type;
@@ -101,7 +102,7 @@ struct multiboot_tag_elf_sections_t {
     uint32_t section_size;
     uint32_t shndx;
     multiboot_elf_sections_entry_t entries[];
-};
+} PACKED;
 
 bool cSystemInformationProvider::Init(uint64_t ulMagic, uint64_t ulMBIBegin) {
     this->pulMagic = ulMagic;
@@ -187,7 +188,7 @@ bool cSystemInformationProvider::Init(uint64_t ulMagic, uint64_t ulMBIBegin) {
     } while (pTag->type != MULTIBOOT_TAG_TYPE_END);
 
     pTag = (multiboot_tag_t *) ((uint8_t *) pTag + ((pTag->size + 7) & ~7));
-    this->pulMBIEnd = (uint64_t) pTag - this->pulMBIBegin;
+    this->pulMBIEnd = (uint64_t) pTag;
 
     return Init();
 }

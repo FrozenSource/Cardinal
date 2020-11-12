@@ -25,17 +25,27 @@ C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
         return;
     }
 
-    uint64_t ulTotalMemory = oSystemInf.GetTotalMemorySize(), ulUsedMemory = 0;
+    uint64_t ulTotalMemory = oSystemInf.GetTotalMemorySize(), ulFreeMemory = 0, ulKernelEnd = (uint64_t) oSystemInf.GetKernelEnd();
+    uint64_t ulFreeBegin = ulKernelEnd + 1024;
     for (uint8_t uiIndex = 0; uiIndex < oSystemInf.GetMemorySectionCount(); uiIndex++) {
         tMemorySection& oSection = oSystemInf.GetMemorySection(uiIndex);
-        if (oSection.eType != eMemoryType::AVAILABLE) {
-            ulUsedMemory += oSection.ulLength;
-            continue;
+        if (oSection.eType == eMemoryType::AVAILABLE) {
+            if (oSection.pAddress < ulFreeBegin) {
+                oSection.ulLength -= ulFreeBegin - oSection.pAddress;
+                oSection.pAddress = ulFreeBegin;
+            }
+
+            ulFreeMemory += oSection.ulLength;
         }
     }
+
+    printf("Memory Kernel Begin at: %s\n", formatBytes((uint64_t) oSystemInf.GetKernelBegin(), 2, eByteSize::KILOBYTES));
+    printf("Memory Kernel End at: %s\n", formatBytes((uint64_t) oSystemInf.GetKernelEnd(), 2, eByteSize::KILOBYTES));
+    printf("Memory Start Free at: %s\n", formatBytes(ulFreeBegin, 2, eByteSize::KILOBYTES));
+
     printf("Total Memory:   %s\n", formatBytes(ulTotalMemory, 2, eByteSize::MEGABYTES));
-    printf("Used Memory:    %s\n", formatBytes(ulUsedMemory, 2, eByteSize::MEGABYTES));
-    printf("Free Memory:    %s\n", formatBytes(ulTotalMemory - ulUsedMemory, 2, eByteSize::MEGABYTES));
+    printf("Used Memory:    %s\n", formatBytes(ulTotalMemory - ulFreeMemory, 2, eByteSize::MEGABYTES));
+    printf("Free Memory:    %s\n", formatBytes(ulFreeMemory, 2, eByteSize::MEGABYTES));
 
     Setup_Interrupts();
 

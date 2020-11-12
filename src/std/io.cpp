@@ -23,7 +23,7 @@ void printf(cstring sFormat, ...)
                     break;
 
                 case 'i':
-                    ilValue = va_arg(aArgs, uint64_t);
+                    ilValue = va_arg(aArgs, int64_t);
                     puts(itoa(ilValue, 10));
                     break;
                 
