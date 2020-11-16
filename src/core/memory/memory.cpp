@@ -33,18 +33,3 @@ void memcpy(void* pDestination, const void* pSource, memsize_t uiSize) {
         }
     }
 }
-
-bool cMemoryManager::Init() {
-    cSystemInformationProvider& oSystemInf = cSystemInformationProvider::Get();
-    if (!oSystemInf.IsInitialized()) {
-        
-    }
-
-    this->pbInitialized = true;
-    return true;
-}
-
-bool cMemoryManager::Destroy() {
-    this->pbInitialized = false;
-    return true;
-}

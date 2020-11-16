@@ -64,6 +64,7 @@ set(HEADERS
         ${PROJECT_SOURCE_DIR}/include/core/io/isr.h
         ${PROJECT_SOURCE_DIR}/include/core/io/ports.h
         ${PROJECT_SOURCE_DIR}/include/drivers/timer.h
+        ${PROJECT_SOURCE_DIR}/include/core/memory/frame.h
 # drivers
         ${PROJECT_SOURCE_DIR}/include/drivers/screen.h
         ${PROJECT_SOURCE_DIR}/include/drivers/keyboard.h
@@ -88,6 +89,7 @@ set(SOURCES
         ${PROJECT_SOURCE_DIR}/src/core/io/isr.cpp
         ${PROJECT_SOURCE_DIR}/src/core/io/ports.cpp
         ${PROJECT_SOURCE_DIR}/src/drivers/timer.cpp
+        ${PROJECT_SOURCE_DIR}/src/core/memory/frame.cpp
 # drivers
         ${PROJECT_SOURCE_DIR}/src/drivers/screen.cpp
         ${PROJECT_SOURCE_DIR}/src/drivers/keyboard.cpp

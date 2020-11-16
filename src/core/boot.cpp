@@ -1,11 +1,8 @@
 #include <core/boot.h>
 #include <std/io.h>
 
-/* The magic field should contain this. */
-#define MULTIBOOT2_HEADER_MAGIC			0xe85250d6
-
 /* This should be in %eax. */
-#define MULTIBOOT2_BOOTLOADER_MAGIC		0x36d76289
+#define MULTIBOOT2_MAGIC_VALUE		0x36d76289
 
 /* ELF defs. */
 #define MULTIBOOT_ELF_SECTION_TYPE_NULL 0
@@ -33,20 +30,6 @@
 #define MULTIBOOT_TAG_TYPE_EFI32_IH          19
 #define MULTIBOOT_TAG_TYPE_EFI64_IH          20
 #define MULTIBOOT_TAG_TYPE_LOAD_BASE_ADDR    21
-
-struct multiboot_header_t
-{
-    uint32_t magic;
-    uint32_t architecture;
-    uint32_t header_length;
-    uint32_t checksum;
-} PACKED;
-
-struct multiboot_header_tag_t {
-  uint16_t type;
-  uint16_t flags;
-  uint32_t size;
-} PACKED;
 
 struct multiboot_tag_t {
     uint32_t type;
@@ -109,7 +92,7 @@ bool cSystemInformationProvider::Init(uint64_t ulMagic, uint64_t ulMBIBegin) {
     this->pulMBIBegin = ulMBIBegin;
 
     // Check the magic number for multiboot.
-    if (this->pulMagic != MULTIBOOT2_BOOTLOADER_MAGIC) {
+    if (this->pulMagic != MULTIBOOT2_MAGIC_VALUE) {
         printf("Invalid magic number: 0x%x\n", this->pulMagic);
         return false;
     }

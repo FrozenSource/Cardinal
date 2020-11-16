@@ -9,6 +9,7 @@
 #include <std/io.h>
 #include <std/convert.h>
 #include <std/string.h>
+#include <core/memory/frame.h>
 #include <core/boot.h>
 
 C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin) __asm__("kmain");
@@ -51,6 +52,7 @@ C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
 
     cStaticTimer::Get().Init();
     cStaticKeyBoardDriver::Get().Init();
+    mmap_init();
 
     while (1) {
         __asm__("hlt");
