@@ -3,7 +3,7 @@
 #include <core/io/ports.h>
 
 #define VGA_WIDTH 80
-#define VGA_HEIGHT 24
+#define VGA_HEIGHT 25
 
 #define FB_COMMAND_PORT 0x3D4
 #define FB_DATA_PORT 0x3D5
@@ -63,53 +63,28 @@ void cStaticTerminalDriver::Print(char cCharacter)
 {
     Init();
 
-    if (cCharacter == '\n')
-    {
+    if (cCharacter == '\n') {
         this->puiCurrentColumn = 0;
-        if (++this->puiCurrentRow >= VGA_HEIGHT)
-            this->puiCurrentRow = 0;
-        return;
-    }
-    else if (cCharacter == '\t')
-    {
+        if (++this->puiCurrentRow >= VGA_HEIGHT) {
+            Clear();
+        }
+    } else if (cCharacter == '\t') {
         this->puiCurrentColumn = this->puiCurrentColumn + 4 - (this->puiCurrentColumn % 4);
-    }
-    else if (cCharacter == '\r')    
-    {
+    } else if (cCharacter == '\r') {
         this->puiCurrentColumn = 0;
-    }
-    else
-    {
+    } else {
         const uint16_t uiOffset = OffsetFromCoords(this->puiCurrentColumn, this->puiCurrentRow);
 
         this->ppFrameBuffer[uiOffset] = cCharacter;
         this->ppFrameBuffer[uiOffset + 1] = this->peColorScheme;
 
-        // scrolling
-        if (uiOffset > VGA_HEIGHT * VGA_WIDTH * 2)
-        {
-            for (memsize_t uiIndex = 1; uiIndex < VGA_HEIGHT; uiIndex++)
-            {
-                memcpy(
-                    (void *)(C_MEMORY_VGA_VIDEO_ADDRESS + (2 * uiIndex * VGA_WIDTH)),
-                    (const void *)(C_MEMORY_VGA_VIDEO_ADDRESS + (2 * (uiIndex - 1) * VGA_WIDTH)),
-                    2 * VGA_WIDTH);
-            }
-
-            cstring sLastLine = (cstring)(2 * (VGA_HEIGHT)*VGA_WIDTH + C_MEMORY_VGA_VIDEO_ADDRESS);
-            for (uint32_t uiIndex = 0; uiIndex < VGA_WIDTH * 2; uiIndex++)
-            {
-                sLastLine[uiIndex] = 0;
-            }
-
-            this->puiCurrentRow--;
-        }
-
-        this->puiCurrentColumn++;
-        if (this->puiCurrentColumn >= VGA_WIDTH)
-        {
+        if (++this->puiCurrentColumn >= VGA_WIDTH) {
             this->puiCurrentColumn = 0;
             this->puiCurrentRow++;
+        }
+
+        if (this->puiCurrentRow >= VGA_HEIGHT) {
+            Clear();
         }
     }
     SetCursorPosition(this->puiCurrentColumn, this->puiCurrentRow);
@@ -131,14 +106,9 @@ void cStaticTerminalDriver::SetCursorPosition(uint8_t uiX, uint8_t uiY)
 
 void cStaticTerminalDriver::Clear()
 {
-    for (uint32_t y = 0; y < VGA_HEIGHT; y++)
-    {
-        for (uint32_t x = 0; x < VGA_WIDTH; x++)
-        {
-            Print(' ');
-        }
-    }
+    memset((char*) C_MEMORY_VGA_VIDEO_ADDRESS, 0, 2 * VGA_HEIGHT * VGA_WIDTH);
     this->puiCurrentColumn = 0;
     this->puiCurrentRow = 0;
+
     SetCursorPosition(this->puiCurrentColumn, this->puiCurrentRow);
 }

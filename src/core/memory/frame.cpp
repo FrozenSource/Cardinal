@@ -1,40 +1,6 @@
 #include <core/memory/frame.h>
 #include <std/io.h>
 
-#define MULTIBOOT_MEMORY_AVAILABLE  1
-#define MULTIBOOT_TAG_TYPE_MMAP             6
-#define MULTIBOOT_TAG_TYPE_END              0
-
-#define PANIC(x, ...) printf(x, __VA_ARGS__)
-#define DEBUG(x, ...) printf(x, __VA_ARGS__)
-
-struct multiboot_tag_t {
-    uint32_t type;
-    uint32_t size;
-} PACKED;
-
-struct multiboot_info_t
-{
-  uint32_t size;
-  uint32_t reserved;
-  multiboot_tag_t tags[];
-} PACKED;
-
-struct multiboot_mmap_entry_t {
-    uint64_t addr;
-    uint64_t len;
-    uint32_t type;
-    uint32_t zero;
-} PACKED;
-
-struct multiboot_tag_mmap_t {
-    uint32_t type;
-    uint32_t size;
-    uint32_t entry_size;
-    uint32_t entry_version;
-    multiboot_mmap_entry_t entries[];
-} PACKED;
-
 multiboot_tag_mmap_t* memory_area;
 uint64_t kernel_start;
 uint64_t kernel_end;
@@ -67,7 +33,7 @@ void mmap_init() {
     memory_area = mmap;
 }
 
-uint64_t mmap_read(uint64_t request, uint8_t mode) {
+uint64_t mmap_read(uint64_t request) {
     uint64_t cur_num = 0;
 
     for (
@@ -81,17 +47,14 @@ uint64_t mmap_read(uint64_t request, uint8_t mode) {
 
         uint64_t entry_end = entry->addr + entry->len;
 
-        for (uint64_t i = entry->addr; i + PAGE_SIZE < entry_end; i += PAGE_SIZE) {
-            if ((i >= multiboot_start && i <= multiboot_end) || (i >= kernel_start && i <= kernel_end)) {
+        for (uint64_t addr = entry->addr; addr + PAGE_SIZE < entry_end; addr += PAGE_SIZE) {
+            if ((addr >= multiboot_start && addr <= multiboot_end) || (addr >= kernel_start &&
+                    addr <= kernel_end)) {
                 continue;
             }
 
-            if (mode == MMAP_GET_NUM && request >= i && request <= i + PAGE_SIZE) {
-                return cur_num + 1;
-            }
-
-            if (mode == MMAP_GET_ADDR && cur_num == request && i != 0) {
-                return i;
+            if (cur_num == request && addr != 0) {
+                return addr;
             }
 
             cur_num++;
@@ -103,7 +66,7 @@ uint64_t mmap_read(uint64_t request, uint8_t mode) {
 
 uint64_t mmap_allocate_frame() {
     // Get the address for the next free frame
-    uint64_t addr = mmap_read(next_free_frame, MMAP_GET_ADDR);
+    uint64_t addr = mmap_read(next_free_frame++);
 
     if (addr == 0) {
         PANIC("failed to allocate a new frame, addr=%p", addr);
@@ -111,21 +74,18 @@ uint64_t mmap_allocate_frame() {
 
     DEBUG("allocated new frame with addr=%p", addr);
 
-    return next_free_frame++;
+    return addr;
 }
 
-void mmap_deallocate_frame(uint64_t addr) {
-    uint64_t frame = frame_starting_address(addr);
-
-    for (int i = 0; i < PAGE_SIZE; i++) {
-        ((uint64_t*)frame)[i] = 0;
-    }
+void mmap_deallocate_frame(uint64_t frame_number) {
+    uint64_t addr = frame_starting_address(frame_number);
+    memset((byte*) addr, 0, sizeof(uint64_t) * PAGE_SIZE);
 }
 
 uint64_t frame_containing_address(uint64_t addr) {
     return addr / PAGE_SIZE;
 }
 
-uint64_t frame_starting_address(uint64_t addr) {
-    return addr * PAGE_SIZE;
+uint64_t frame_starting_address(uint64_t frame_number) {
+    return frame_number * PAGE_SIZE;
 }

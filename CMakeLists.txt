@@ -65,6 +65,8 @@ set(HEADERS
         ${PROJECT_SOURCE_DIR}/include/core/io/ports.h
         ${PROJECT_SOURCE_DIR}/include/drivers/timer.h
         ${PROJECT_SOURCE_DIR}/include/core/memory/frame.h
+        ${PROJECT_SOURCE_DIR}/include/core/memory/paging.h
+        ${PROJECT_SOURCE_DIR}/include/core/memory/alloc.h
 # drivers
         ${PROJECT_SOURCE_DIR}/include/drivers/screen.h
         ${PROJECT_SOURCE_DIR}/include/drivers/keyboard.h
@@ -90,6 +92,8 @@ set(SOURCES
         ${PROJECT_SOURCE_DIR}/src/core/io/ports.cpp
         ${PROJECT_SOURCE_DIR}/src/drivers/timer.cpp
         ${PROJECT_SOURCE_DIR}/src/core/memory/frame.cpp
+        ${PROJECT_SOURCE_DIR}/src/core/memory/paging.cpp
+        ${PROJECT_SOURCE_DIR}/src/core/memory/alloc.cpp
 # drivers
         ${PROJECT_SOURCE_DIR}/src/drivers/screen.cpp
         ${PROJECT_SOURCE_DIR}/src/drivers/keyboard.cpp

@@ -1,9 +1,10 @@
 #include <core/memory/memory.h>
 #include <core/boot.h>
 
-void memset(byte* pAddress, byte bValue, memsize_t uiSize) {
+void memset(void* pAddress, byte bValue, memsize_t uiSize) {
+    byte* pbAddress = (byte*) pAddress;
     while(uiSize--) {
-        *pAddress++ = bValue;
+        *pbAddress++ = bValue;
     }
 }
 
@@ -32,4 +33,12 @@ void memcpy(void* pDestination, const void* pSource, memsize_t uiSize) {
             ((byte*)pDestination)[uiIndex] = ((byte*)pSource)[uiIndex];
         }
     }
+}
+
+C_FUNCTION void memmove(void* pAddress, const void* pSource, memsize_t uiSize) {
+    byte aBuffer[uiSize];
+
+    memcpy((void*) pSource, aBuffer, uiSize);
+
+    return memcpy(pAddress, (const void*) &aBuffer[0], uiSize);
 }
