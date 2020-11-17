@@ -22,8 +22,8 @@ struct multiboot_info_t
 } PACKED;
 
 void* find_multiboot_tag(multiboot_info_t* mbi, uint16_t type);
-void mmap_init();
-uint64_t mmap_allocate_frame();
-void mmap_deallocate_frame(uint64_t frame_number);
+void frame_init();
+opt_uint64_t frame_allocate();
+void frame_deallocate(uint64_t frame_number);
 uint64_t frame_containing_address(uint64_t addr);
 uint64_t frame_starting_address(uint64_t frame_number);

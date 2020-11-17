@@ -48,7 +48,7 @@ uint64_t page_containing_address(uint64_t virtual_address);
 // Returns a virtual address.
 uint64_t page_start_address(uint64_t page);
 // Returns a frame number.
-uint64_t translate_page(uint64_t page);
+opt_uint64_t translate_page(uint64_t page);
 void map_page_to_frame(uint64_t page, uint64_t frame, uint64_t flags);
 void map(uint64_t page_number, uint64_t flags);
 void map_multiple(uint64_t start_page_number, uint32_t number_of_pages, uint64_t flags);

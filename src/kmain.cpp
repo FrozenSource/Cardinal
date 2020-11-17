@@ -15,9 +15,9 @@
 #include <core/memory/alloc.h>
 #include <std/memory.h>
 
-char * strcpy(char *strDest, const char *strSrc) {
+char* strcpy(char *strDest, const char *strSrc) {
     char *temp = strDest;
-    while(*strDest++ = *strSrc++); // or while((*strDest++=*strSrc++) != '\0');
+    while((*strDest++=*strSrc++) != '\0');
     return temp;
 }
 
@@ -67,7 +67,7 @@ C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
 
     cStaticTimer::Get().Init();
     cStaticKeyBoardDriver::Get().Init();
-    mmap_init();
+    frame_init();
     paging_init();
     alloc_init();
     

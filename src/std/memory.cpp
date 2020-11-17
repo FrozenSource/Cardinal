@@ -105,7 +105,7 @@ static long long l_possibleOverruns = 0;    ///< Number of possible overruns
 // ***********   HELPER FUNCTIONS  *******************************
 
 static void*    liballoc_memset(void* s, int c, size_t n) {
-    int i;
+    size_t i;
 
     for (i = 0; i < n ; i++) {
         ((char*)s)[i] = c;
@@ -183,7 +183,7 @@ static void liballoc_dump() {
 // ***************************************************************
 
 static struct liballoc_major* allocate_new_page(unsigned int size) {
-    unsigned int st;
+    int st;
     struct liballoc_major* maj;
 
     // This is how much space is required.
@@ -742,7 +742,7 @@ void* PREFIX(calloc)(size_t nobj, size_t size) {
 void*   PREFIX(realloc)(void* p, size_t size) {
     void* ptr;
     struct liballoc_minor* min;
-    int real_size;
+    size_t real_size;
 
     // Honour the case of size == 0 => free old and return NULL
     if (size == 0) {

@@ -2,19 +2,18 @@
 #include <core/memory/paging.h>
 #include <core/memory/bitmap.h>
 
-bitmap_t allocated_pages[HEAP_SIZE / PAGE_SIZE];
+#define ALLOC_BITMAP_SIZE (HEAP_SIZE / PAGE_SIZE) / BITS_PER_WORD
+
+bitmap_t allocated_pages[ALLOC_BITMAP_SIZE];
 uint64_t heap_end_page;
 uint64_t heap_start_page;
 uint64_t max_pages;
 
 void alloc_init() {
+    memset(allocated_pages, 0, ALLOC_BITMAP_SIZE);
     heap_end_page = page_containing_address(HEAP_START + HEAP_SIZE - 1);
     heap_start_page = page_containing_address(HEAP_START);
     max_pages = heap_end_page - heap_start_page + 1;
-
-    for (uint64_t i = 0; i < HEAP_SIZE / PAGE_SIZE; i++) {
-        allocated_pages[i] = 0;
-    }
 }
 
 int liballoc_lock() {
@@ -27,7 +26,7 @@ int liballoc_unlock() {
     return 0;
 }
 
-void* liballoc_alloc(int number_of_pages) {
+void* liballoc_alloc(uint32_t number_of_pages) {
     uint64_t first_free_page = 0;
     uint32_t free_page_count = 0;
 
@@ -50,7 +49,7 @@ void* liballoc_alloc(int number_of_pages) {
 
     uint64_t addr = page_start_address(heap_start_page + first_free_page);
 
-    for (uint64_t i = 0; i < number_of_pages; i++) {
+    for (uint32_t i = 0; i < number_of_pages; i++) {
         bitmap_set(allocated_pages, first_free_page + i);
     }
 
@@ -60,10 +59,10 @@ void* liballoc_alloc(int number_of_pages) {
     return (void*) addr;
 }
 
-int liballoc_free(void* ptr, int number_of_pages) {
+int liballoc_free(void* ptr, uint32_t number_of_pages) {
     uint64_t page = page_containing_address((uint64_t)ptr);
 
-    for (uint64_t i = 0; i < number_of_pages; i++) {
+    for (uint32_t i = 0; i < number_of_pages; i++) {
         bitmap_clear(allocated_pages, i);
     }
     
