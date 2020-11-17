@@ -9,11 +9,7 @@
 #include <std/io.h>
 #include <std/convert.h>
 #include <std/string.h>
-#include <core/memory/frame.h>
-#include <core/memory/paging.h>
 #include <core/boot.h>
-#include <core/memory/alloc.h>
-#include <std/memory.h>
 
 char* strcpy(char *strDest, const char *strSrc) {
     char *temp = strDest;
@@ -67,12 +63,6 @@ C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
 
     cStaticTimer::Get().Init();
     cStaticKeyBoardDriver::Get().Init();
-    paging_init();
-    alloc_init();
-    
-    void* pAddr1 = malloc(1024 * 1024);
-    printf("p1: %p\n", pAddr1);
-    free(pAddr1);
 
     overflow();
 
