@@ -11,7 +11,7 @@ set(CMAKE_CXX_COMPILER x86_64-elf-g++)
 set(CMAKE_LD x86_64-elf-ld)
 set(CMAKE_AR x86_64-elf-ar)
 
-set(COMPILER_FLAGS "-W -Wall -Wwrite-strings -pedantic -std=c++17 -O2 -ffreestanding -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -fno-rtti -fno-threadsafe-statics -mno-red-zone")
+set(COMPILER_FLAGS "-W -Wall -std=c++17 -O2 -ffreestanding -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -fno-rtti -fno-threadsafe-statics -mno-red-zone -Wno-write-strings -Wno-pedantic -Wno-missing-field-initializers")
 set(CMAKE_LINK_OBJECTS "<CMAKE_LD> --nmagic --script=${PROJECT_SOURCE_DIR}/linker.ld <OBJECTS> -o ${PROJECT_SOURCE_DIR}/iso/boot/kernel.bin <LINK_LIBRARIES>")
 set(CMAKE_AR_OBJECTS "<CMAKE_AR> rcs <TARGET> <OBJECTS>")
 
@@ -58,6 +58,7 @@ set(HEADERS
         ${PROJECT_SOURCE_DIR}/include/std/string.h
         ${PROJECT_SOURCE_DIR}/include/std/convert.h
         ${PROJECT_SOURCE_DIR}/include/std/io.h
+        ${PROJECT_SOURCE_DIR}/include/std/memory.h
         ${PROJECT_SOURCE_DIR}/include/core/memory/memory.h
 # setup
         ${PROJECT_SOURCE_DIR}/include/core/io/idt.h
@@ -67,6 +68,7 @@ set(HEADERS
         ${PROJECT_SOURCE_DIR}/include/core/memory/frame.h
         ${PROJECT_SOURCE_DIR}/include/core/memory/paging.h
         ${PROJECT_SOURCE_DIR}/include/core/memory/alloc.h
+        ${PROJECT_SOURCE_DIR}/include/core/memory/bitmap.h
 # drivers
         ${PROJECT_SOURCE_DIR}/include/drivers/screen.h
         ${PROJECT_SOURCE_DIR}/include/drivers/keyboard.h
@@ -83,6 +85,7 @@ set(SOURCES
         ${PROJECT_SOURCE_DIR}/src/std/string.cpp
         ${PROJECT_SOURCE_DIR}/src/std/convert.cpp
         ${PROJECT_SOURCE_DIR}/src/std/io.cpp
+        ${PROJECT_SOURCE_DIR}/src/std/memory.cpp
         ${PROJECT_SOURCE_DIR}/src/core/memory/memory.cpp
 # c-entry
         ${PROJECT_SOURCE_DIR}/src/kmain.cpp
@@ -94,6 +97,7 @@ set(SOURCES
         ${PROJECT_SOURCE_DIR}/src/core/memory/frame.cpp
         ${PROJECT_SOURCE_DIR}/src/core/memory/paging.cpp
         ${PROJECT_SOURCE_DIR}/src/core/memory/alloc.cpp
+        ${PROJECT_SOURCE_DIR}/src/core/memory/bitmap.cpp
 # drivers
         ${PROJECT_SOURCE_DIR}/src/drivers/screen.cpp
         ${PROJECT_SOURCE_DIR}/src/drivers/keyboard.cpp

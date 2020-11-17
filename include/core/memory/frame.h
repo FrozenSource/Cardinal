@@ -4,6 +4,8 @@
 #include <std/io.h>
 
 #define PAGE_SIZE       4096
+// 256 mb
+#define MAX_FRAMES      (256 * 1000000) / PAGE_SIZE
 
 #define MULTIBOOT_MEMORY_AVAILABLE  1
 #define MULTIBOOT_TAG_TYPE_MMAP             6

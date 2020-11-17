@@ -13,6 +13,7 @@
 #include <core/memory/paging.h>
 #include <core/boot.h>
 #include <core/memory/alloc.h>
+#include <std/memory.h>
 
 C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin) __asm__("kmain");
 C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
@@ -57,6 +58,11 @@ C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
     mmap_init();
     paging_init();
     alloc_init();
+
+    cStaticTerminalDriver::Get().Clear();
+    void* pAddr1 = malloc(1024 * 1024);
+    printf("p1: %p\n", pAddr1);
+    free(pAddr1);
 
     while (1) {
         __asm__("hlt");

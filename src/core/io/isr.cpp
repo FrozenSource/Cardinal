@@ -171,7 +171,7 @@ void irq_init()
 
 void isr_handler(uint64_t id, uint64_t stack) __asm__("isr_handler");
 void isr_handler(uint64_t id, UNUSED uint64_t stack) {
-    printf("Received interrupt: %d\n%s\n", id, exception_messages[id]);
+    printf("Received interrupt: %i\n%s\n", id, exception_messages[id]);
     __asm__("hlt");
 }
 

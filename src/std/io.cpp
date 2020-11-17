@@ -37,6 +37,7 @@ void printf(cstring sFormat, ...)
                     puts(dtoa(dValue, 2));
                     break;
 
+                case 'p':
                 case 'x':
                     ilValue = va_arg(aArgs, uint64_t);
                     puts(itoa(ilValue, 16));
