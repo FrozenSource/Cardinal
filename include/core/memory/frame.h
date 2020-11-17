@@ -14,15 +14,6 @@
 #define DEBUG(x, ...) printf(x "\n", __VA_ARGS__)
 #define PANIC(x, ...) DEBUG(x, __VA_ARGS__)
 
-struct multiboot_info_t
-{
-  uint32_t size;
-  uint32_t reserved;
-  multiboot_tag_t tags[];
-} PACKED;
-
-void* find_multiboot_tag(multiboot_info_t* mbi, uint16_t type);
-void frame_init();
 opt_uint64_t frame_allocate();
 void frame_deallocate(uint64_t frame_number);
 uint64_t frame_containing_address(uint64_t addr);

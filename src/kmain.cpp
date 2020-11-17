@@ -67,7 +67,6 @@ C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
 
     cStaticTimer::Get().Init();
     cStaticKeyBoardDriver::Get().Init();
-    frame_init();
     paging_init();
     alloc_init();
     
