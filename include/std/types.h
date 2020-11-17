@@ -17,3 +17,23 @@ typedef size_t memsize_t;
 
 typedef char* cstring;
 typedef uint8_t byte;
+
+struct opt_uint8_t {
+    bool has_value;
+    uint8_t value;
+};
+
+struct opt_uint16_t {
+    bool has_value;
+    uint16_t value;
+};
+
+struct opt_uint32_t {
+    bool has_value;
+    uint32_t value;
+};
+
+struct opt_uint64_t {
+    bool has_value;
+    uint64_t value;
+};

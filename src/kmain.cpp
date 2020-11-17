@@ -58,8 +58,7 @@ C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
     mmap_init();
     paging_init();
     alloc_init();
-
-    cStaticTerminalDriver::Get().Clear();
+    
     void* pAddr1 = malloc(1024 * 1024);
     printf("p1: %p\n", pAddr1);
     free(pAddr1);
