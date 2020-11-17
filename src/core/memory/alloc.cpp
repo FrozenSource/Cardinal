@@ -29,21 +29,33 @@ int liballoc_unlock() {
 
 void* liballoc_alloc(int number_of_pages) {
     uint64_t first_free_page = 0;
+    uint32_t free_page_count = 0;
 
    for (uint64_t i = 1; i <= max_pages; i++) {
         if (bitmap_get(allocated_pages, i) == false) {
-            first_free_page = i;
-            break;
+            free_page_count++;
+
+            if (free_page_count == number_of_pages) {
+                first_free_page = i - (free_page_count - 1);
+                break;
+            }
+        } else {
+            free_page_count = 0;
         }
     }
 
+    if (first_free_page == 0) {
+        PANIC("no free pages for alloc of %d pages", number_of_pages);
+    }
+
     uint64_t addr = page_start_address(heap_start_page + first_free_page);
-    memset((void*)addr, 0, (first_free_page - 1) * PAGE_SIZE);
 
     for (uint64_t i = 0; i < number_of_pages; i++) {
         bitmap_set(allocated_pages, first_free_page + i);
-        map(heap_start_page + first_free_page + i, PAGING_FLAG_WRITABLE);
     }
+
+    map_multiple(heap_start_page + first_free_page, number_of_pages,
+                 PAGING_FLAG_PRESENT | PAGING_FLAG_WRITABLE);
 
     return (void*) addr;
 }
@@ -53,8 +65,9 @@ int liballoc_free(void* ptr, int number_of_pages) {
 
     for (uint64_t i = 0; i < number_of_pages; i++) {
         bitmap_clear(allocated_pages, i);
-        unmap(page + i);
     }
+    
+    unmap_multiple(page, number_of_pages);
 
     return 0;
 }

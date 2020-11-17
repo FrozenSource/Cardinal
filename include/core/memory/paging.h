@@ -51,4 +51,7 @@ uint64_t page_start_address(uint64_t page);
 uint64_t translate_page(uint64_t page);
 void map_page_to_frame(uint64_t page, uint64_t frame, uint64_t flags);
 void map(uint64_t page_number, uint64_t flags);
+void map_multiple(uint64_t start_page_number, uint32_t number_of_pages, uint64_t flags);
 void unmap(uint64_t page_number);
+void unmap_multiple(uint64_t start_page_number, uint32_t number_of_pages);
+uint32_t paging_amount_for_byte_size(uint64_t start_address, uint64_t byte_size);

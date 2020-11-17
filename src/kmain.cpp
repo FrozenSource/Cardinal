@@ -15,6 +15,18 @@
 #include <core/memory/alloc.h>
 #include <std/memory.h>
 
+char * strcpy(char *strDest, const char *strSrc) {
+    char *temp = strDest;
+    while(*strDest++ = *strSrc++); // or while((*strDest++=*strSrc++) != '\0');
+    return temp;
+}
+
+int overflow() {
+    char c[12];
+    strcpy(c, "123456789012345678901234567890");
+    return 1;
+}
+
 C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin) __asm__("kmain");
 C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
 {
@@ -62,6 +74,8 @@ C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
     void* pAddr1 = malloc(1024 * 1024);
     printf("p1: %p\n", pAddr1);
     free(pAddr1);
+
+    overflow();
 
     while (1) {
         __asm__("hlt");

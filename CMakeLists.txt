@@ -11,7 +11,7 @@ set(CMAKE_CXX_COMPILER x86_64-elf-g++)
 set(CMAKE_LD x86_64-elf-ld)
 set(CMAKE_AR x86_64-elf-ar)
 
-set(COMPILER_FLAGS "-W -Wall -std=c++17 -O2 -ffreestanding -nostdlib -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs -fno-rtti -fno-threadsafe-statics -mno-red-zone -Wno-write-strings -Wno-pedantic -Wno-missing-field-initializers")
+set(COMPILER_FLAGS "-W -Wall -std=c++17 -O2 -ffreestanding -nostdlib -nostdinc -fno-builtin -fstack-protector -nostartfiles -nodefaultlibs -fno-rtti -fno-threadsafe-statics -mno-red-zone -Wno-write-strings -Wno-pedantic -Wno-missing-field-initializers")
 set(CMAKE_LINK_OBJECTS "<CMAKE_LD> --nmagic --script=${PROJECT_SOURCE_DIR}/linker.ld <OBJECTS> -o ${PROJECT_SOURCE_DIR}/iso/boot/kernel.bin <LINK_LIBRARIES>")
 set(CMAKE_AR_OBJECTS "<CMAKE_AR> rcs <TARGET> <OBJECTS>")
 
@@ -87,6 +87,7 @@ set(SOURCES
         ${PROJECT_SOURCE_DIR}/src/std/io.cpp
         ${PROJECT_SOURCE_DIR}/src/std/memory.cpp
         ${PROJECT_SOURCE_DIR}/src/core/memory/memory.cpp
+        ${PROJECT_SOURCE_DIR}/src/core/memory/stackguard.cpp
 # c-entry
         ${PROJECT_SOURCE_DIR}/src/kmain.cpp
 # setup
