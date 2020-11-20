@@ -9,7 +9,7 @@ SECTIONS {
     .text :
     {
         /* ensure that the multiboot header is at the beginning */
-        KEEP(*(.multiboot_header))
+        KEEP(*(.multiboot))
         /* next we put the .text section */
         *(.text)
         . = ALIGN(4K);

@@ -1,9 +1,32 @@
 ; cf. https://intermezzos.github.io/book/hello-world.html
 
 global start
-extern long_mode_start
+global long_mode_start
 
-%define MULTIBOOT2_MAGIC_VALUE 0x36d76289
+; Some constants used for multiboot header
+; No need to understand, they are just a bunch of flags and magic values for the bootloader to find and recognize it as a multibootkernel
+FLAGS       equ  0
+MAGIC       equ  0xe85250d6
+; Some constants for loading higher half kernel
+VM_BASE     equ 0xC0000000
+PDE_INDEX   equ (VM_BASE >> 22)
+PSE_BIT     equ 0x00000010
+PG_BIT      equ 0x80000000
+
+section .multiboot
+header_start:
+    ; `dd` means 'define double word'
+    dd MAGIC	
+    dd FLAGS
+    dd header_end - header_start ; header length
+    ; checksum
+    dd 0x100000000 - (MAGIC + 0 + (header_end - header_start))
+    ; required end tag
+    ; `dw` means 'define word' (word = 16 bits on x86_64)
+    dw 0    ; type
+    dw 0    ; flags
+    dd 8    ; size
+header_end:
 
 section .text
 bits 32
@@ -176,3 +199,33 @@ gdt64:
 .pointer:
     dw .pointer - gdt64 - 1
     dq gdt64
+
+section .text
+bits 64
+long_mode_start:
+	call activateSSE
+
+	; load 0 into all data segment registers
+	mov ax, 0
+	mov ss, ax
+	mov ds, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+
+    extern kmain
+	call kmain
+
+	; should not happen
+	hlt
+
+activateSSE:
+	mov rax, cr0
+	and ax, 0b11111101
+	or  ax, 0b00000001
+	mov cr0, rax
+
+	mov rax, cr4
+	or ax,  0b1100000000
+	mov cr4, rax
+	ret
