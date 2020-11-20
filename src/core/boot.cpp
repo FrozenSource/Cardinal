@@ -1,4 +1,6 @@
 #include <core/boot.h>
+#include <boot/multiboot.h>
+
 #include <std/io.h>
 
 bool cSystemInformationProvider::Init(uint64_t ulMagic, uint64_t ulMBIBegin) {

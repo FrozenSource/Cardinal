@@ -1,25 +1,12 @@
-#include <std/types.h>
-#include <drivers/screen.h>
 #include <Version.h>
-#include <core/io/isr.h>
-#include <core/memory/memory.h>
-#include <drivers/keyboard.h>
-#include <drivers/timer.h>
-#include <drivers/serial.h>
+
 #include <std/io.h>
 #include <std/convert.h>
 #include <std/string.h>
-#include <core/memory/frame.h>
-#include <core/memory/paging.h>
-#include <core/boot.h>
-#include <core/memory/alloc.h>
+#include <std/types.h>
 #include <std/memory.h>
 
-char* strcpy(char *strDest, const char *strSrc) {
-    char *temp = strDest;
-    while((*strDest++=*strSrc++) != '\0');
-    return temp;
-}
+#include <core/boot.h>
 
 int overflow() {
     char c[12];
@@ -27,10 +14,7 @@ int overflow() {
     return 1;
 }
 
-C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin) __asm__("kmain");
-C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
-{
-    cStaticTerminalDriver::Get().Clear();
+C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin) {
     printf("CardinalOS\n");
     printf("Kernel version: %s\n", VERSION_STR);
     printf("Build on %s at %s\n", __DATE__, __TIME__);
@@ -62,17 +46,6 @@ C_FUNCTION void kmain(uint64_t ulMagic, uint64_t ulMBIBegin)
     printf("Total Memory:   %s\n", formatBytes(ulTotalMemory, 2, eByteSize::MEGABYTES));
     printf("Used Memory:    %s\n", formatBytes(ulTotalMemory - ulFreeMemory, 2, eByteSize::MEGABYTES));
     printf("Free Memory:    %s\n", formatBytes(ulFreeMemory, 2, eByteSize::MEGABYTES));
-
-    Setup_Interrupts();
-
-    cStaticTimer::Get().Init();
-    cStaticKeyBoardDriver::Get().Init();
-    paging_init();
-    alloc_init();
-    
-    void* pAddr1 = malloc(1024 * 1024);
-    printf("p1: %p\n", pAddr1);
-    free(pAddr1);
 
     overflow();
 

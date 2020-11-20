@@ -50,59 +50,31 @@ configure_file(${PROJECT_SOURCE_DIR}/include/Version.template ${PROJECT_SOURCE_D
 
 set(HEADERS
 # etc
-        ${PROJECT_SOURCE_DIR}/include/debug.h
         ${PROJECT_SOURCE_DIR}/include/Version.h
-# boot
+# kernel
+        ${PROJECT_SOURCE_DIR}/include/boot/multiboot.h
+        ${PROJECT_SOURCE_DIR}/include/core/module.h
         ${PROJECT_SOURCE_DIR}/include/core/boot.h
 # std
         ${PROJECT_SOURCE_DIR}/include/std/string.h
         ${PROJECT_SOURCE_DIR}/include/std/convert.h
         ${PROJECT_SOURCE_DIR}/include/std/io.h
-        ${PROJECT_SOURCE_DIR}/include/std/memory.h
-        ${PROJECT_SOURCE_DIR}/include/core/memory/memory.h
-# setup
-        ${PROJECT_SOURCE_DIR}/include/core/io/idt.h
-        ${PROJECT_SOURCE_DIR}/include/core/io/isr.h
-        ${PROJECT_SOURCE_DIR}/include/core/io/ports.h
-        ${PROJECT_SOURCE_DIR}/include/drivers/timer.h
-        ${PROJECT_SOURCE_DIR}/include/core/memory/frame.h
-        ${PROJECT_SOURCE_DIR}/include/core/memory/paging.h
-        ${PROJECT_SOURCE_DIR}/include/core/memory/alloc.h
-        ${PROJECT_SOURCE_DIR}/include/core/memory/bitmap.h
-# drivers
-        ${PROJECT_SOURCE_DIR}/include/drivers/screen.h
-        ${PROJECT_SOURCE_DIR}/include/drivers/keyboard.h
-        ${PROJECT_SOURCE_DIR}/include/drivers/serial.h)
+        ${PROJECT_SOURCE_DIR}/include/std/memory.h)
 
 set(SOURCES
-# boot
+# kernel
         ${PROJECT_SOURCE_DIR}/src/boot/multiboot.asm
         ${PROJECT_SOURCE_DIR}/src/boot/boot.asm
         ${PROJECT_SOURCE_DIR}/src/boot/long_mode.asm
-        ${PROJECT_SOURCE_DIR}/src/boot/interrupts.asm
         ${PROJECT_SOURCE_DIR}/src/core/boot.cpp
 # std
         ${PROJECT_SOURCE_DIR}/src/std/string.cpp
         ${PROJECT_SOURCE_DIR}/src/std/convert.cpp
         ${PROJECT_SOURCE_DIR}/src/std/io.cpp
         ${PROJECT_SOURCE_DIR}/src/std/memory.cpp
-        ${PROJECT_SOURCE_DIR}/src/core/memory/memory.cpp
-        ${PROJECT_SOURCE_DIR}/src/core/memory/stackguard.cpp
+        ${PROJECT_SOURCE_DIR}/src/std/stackguard.cpp
 # c-entry
-        ${PROJECT_SOURCE_DIR}/src/kmain.cpp
-# setup
-        ${PROJECT_SOURCE_DIR}/src/core/io/idt.cpp
-        ${PROJECT_SOURCE_DIR}/src/core/io/isr.cpp
-        ${PROJECT_SOURCE_DIR}/src/core/io/ports.cpp
-        ${PROJECT_SOURCE_DIR}/src/drivers/timer.cpp
-        ${PROJECT_SOURCE_DIR}/src/core/memory/frame.cpp
-        ${PROJECT_SOURCE_DIR}/src/core/memory/paging.cpp
-        ${PROJECT_SOURCE_DIR}/src/core/memory/alloc.cpp
-        ${PROJECT_SOURCE_DIR}/src/core/memory/bitmap.cpp
-# drivers
-        ${PROJECT_SOURCE_DIR}/src/drivers/screen.cpp
-        ${PROJECT_SOURCE_DIR}/src/drivers/keyboard.cpp
-        ${PROJECT_SOURCE_DIR}/src/drivers/serial.cpp)
+        ${PROJECT_SOURCE_DIR}/src/kmain.cpp)
 
 set(KERNEL_OUTPUT ${PROJECT_SOURCE_DIR}/iso/boot/${KERNEL_NAME})
 

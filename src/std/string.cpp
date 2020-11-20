@@ -14,3 +14,8 @@ void reverse(const cstring sStr) {
         sStr[j] = c;
     }
 }
+
+void strcpy(cstring strDest, const cstring strSrc) {
+    cstring sTemp = strSrc;
+    while((*strDest++=*sTemp++) != '\0');
+}

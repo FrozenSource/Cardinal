@@ -2,7 +2,6 @@
 
 #include <std/string.h>
 #include <std/arg.h>
-#include <drivers/screen.h>
 #include <std/convert.h>
 
 void printf(cstring sFormat, ...)
@@ -69,10 +68,10 @@ void printf(cstring sFormat, ...)
 
 void putchar(char cCharacter)
 {
-    cStaticTerminalDriver::Get().Print(cCharacter);
+    //cStaticTerminalDriver::Get().Print(cCharacter);
 }
 
 void puts(cstring sStr)
 {
-    cStaticTerminalDriver::Get().Print(sStr);
+    //cStaticTerminalDriver::Get().Print(sStr);
 }

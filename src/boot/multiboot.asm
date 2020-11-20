@@ -2,7 +2,7 @@
 section .multiboot_header
 
 %define MULTIBOOT2_MAGIC_NUMBER		0xe85250d6
-%define PROTECTED_MODE_CODE		0
+%define PROTECTED_MODE_CODE		    0
 
 ; it is a label
 header_start:

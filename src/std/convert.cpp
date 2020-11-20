@@ -1,5 +1,5 @@
 #include <std/convert.h>
-#include <core/memory/memory.h>
+#include <std/memory.h>
 
 cstring formatBytes(uint64_t ulSize, uint8_t uiDecimals, eByteSize eMaxFormat) {
 	static char buffer[256];

@@ -17,7 +17,6 @@ start:
 	; `eax` should contain the multiboot2 magic number.
 	mov edi, eax
 
-	call check_multiboot
 	call check_cpuid
 	call check_long_mode
 
@@ -30,14 +29,6 @@ start:
 
     ; should not be reached
     hlt
-
-check_multiboot:
-	cmp eax, MULTIBOOT2_MAGIC_VALUE
-	jne .no_multiboot
-	ret
-.no_multiboot:
-	mov al, "0"
-	jmp error
 
 ; cf. http://wiki.osdev.org/Setting_Up_Long_Mode#Detection_of_CPUID
 check_cpuid:

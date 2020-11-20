@@ -20,13 +20,3 @@ public:
 private:
 
 };
-
-class IBufferManager : public IDriver {
-public:
-
-    virtual void Set(byte bValue, memsize_t uiIndex);
-    virtual void Clear() = 0;
-
-private:
-
-};
