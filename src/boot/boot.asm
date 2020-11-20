@@ -28,6 +28,35 @@ header_start:
     dd 8    ; size
 header_end:
 
+; block started by symbol
+section .bss
+align 4096
+p4_table:
+    ; `resb` means 'reserves bytes'
+    resb 4096
+p3_table:
+    resb 4096
+p2_table:
+    resb 4096
+
+; cf. http://os.phil-opp.com/allocating-frames.html
+stack_bottom:
+    ; 1mb of uninitialized data(1024*1024=104856)
+    resb 104856
+stack_top:
+
+section .rodata
+gdt64:
+    ; `dq` means 'define quad-word'
+    dq 0
+.code: equ $ - gdt64
+    dq (1<<44) | (1<<47) | (1<<41) | (1<<43) | (1<<53)
+.data: equ $ - gdt64
+    dq (1<<44) | (1<<47) | (1<<41)
+.pointer:
+    dw .pointer - gdt64 - 1
+    dq gdt64
+
 section .text
 bits 32
 start:
@@ -161,7 +190,6 @@ enable_paging:
     or eax, 1 << 31
     or eax, 1 << 16
     mov cr0, eax
-
 	ret
 
 ; Prints `ERR: ` and the given error code to screen and hangs.
@@ -173,35 +201,18 @@ error:
 	mov byte  [0xb800a], al
 	hlt
 
-; block started by symbol
-section .bss
-align 4096
-p4_table:
-    ; `resb` means 'reserves bytes'
-    resb 4096
-p3_table:
-    resb 4096
-p2_table:
-    resb 4096
-; cf. http://os.phil-opp.com/allocating-frames.html
-stack_bottom:
-    resb 4096 * 4
-stack_top:
-
-section .rodata
-gdt64:
-    ; `dq` means 'define quad-word'
-    dq 0
-.code: equ $ - gdt64
-    dq (1<<44) | (1<<47) | (1<<41) | (1<<43) | (1<<53)
-.data: equ $ - gdt64
-    dq (1<<44) | (1<<47) | (1<<41)
-.pointer:
-    dw .pointer - gdt64 - 1
-    dq gdt64
-
-section .text
 bits 64
+activateSSE:
+	mov rax, cr0
+	and ax, 0b11111101
+	or  ax, 0b00000001
+	mov cr0, rax
+
+	mov rax, cr4
+	or ax,  0b1100000000
+	mov cr4, rax
+	ret
+
 long_mode_start:
 	call activateSSE
 
@@ -218,14 +229,3 @@ long_mode_start:
 
 	; should not happen
 	hlt
-
-activateSSE:
-	mov rax, cr0
-	and ax, 0b11111101
-	or  ax, 0b00000001
-	mov cr0, rax
-
-	mov rax, cr4
-	or ax,  0b1100000000
-	mov cr4, rax
-	ret

@@ -6,34 +6,28 @@ SECTIONS {
     /* sets the load address of the first section to 1 MiB (convention) */
     . = 1M;
 
-    .text :
+    .text ALIGN(4K) :
     {
-        /* ensure that the multiboot header is at the beginning */
         KEEP(*(.multiboot))
-        /* next we put the .text section */
         *(.text)
-        . = ALIGN(4K);
     }
 
     /* read-only data. */
-    .rodata :
+    .rodata ALIGN(4K) :
     {
         *(.rodata .rodata.*)
-        . = ALIGN(4K);
     }
 
     /* read-write data (initialized) */
-    .data :
+    .data ALIGN(4K) :
     {
         *(.data)
-        . = ALIGN(4K);
     }
 
     /* read-write data (uninitialized) and stack */
-    .bss :
+    .bss ALIGN(4K) :
     {
         *(.bss)
-        . = ALIGN(4K);
     }
 
     /* get rid of unnecessary gcc bits */
