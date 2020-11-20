@@ -27,7 +27,9 @@ SECTIONS {
     /* read-write data (uninitialized) and stack */
     .bss ALIGN(4K) :
     {
+        *(.COMMON)
         *(.bss)
+        *(.stack)
     }
 
     /* get rid of unnecessary gcc bits */

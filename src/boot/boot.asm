@@ -28,6 +28,17 @@ header_start:
     dd 8    ; size
 header_end:
 
+section .data
+align 4096
+global TEMP_PAGE_DIRECTORY
+TEMP_PAGE_DIRECTORY:
+    ; Map the first 4mb physical memory to first 4mb virtual memory. Otherwise, when paging is enabled, eip points to, 0x100004 for example, and MMU is not gonna know how to translate 
+    ; this address into phsyical mem address, because our PDE doesn't tell MMU how to find it.
+    dd 0x00000083
+    times(PDE_INDEX - 1) dd 0
+    dd 0x00000083
+    times(1024 - PDE_INDEX - 1) dd 0 
+
 ; block started by symbol
 section .bss
 align 4096
@@ -39,7 +50,8 @@ p3_table:
 p2_table:
     resb 4096
 
-; cf. http://os.phil-opp.com/allocating-frames.html
+section .stack, nobits
+align 4
 stack_bottom:
     ; 1mb of uninitialized data(1024*1024=104856)
     resb 104856
