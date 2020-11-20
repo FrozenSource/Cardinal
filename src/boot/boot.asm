@@ -1,5 +1,3 @@
-; cf. https://intermezzos.github.io/book/hello-world.html
-
 global start
 global long_mode_start
 
@@ -37,18 +35,7 @@ TEMP_PAGE_DIRECTORY:
     dd 0x00000083
     times(PDE_INDEX - 1) dd 0
     dd 0x00000083
-    times(1024 - PDE_INDEX - 1) dd 0 
-
-; block started by symbol
-section .bss
-align 4096
-p4_table:
-    ; `resb` means 'reserves bytes'
-    resb 4096
-p3_table:
-    resb 4096
-p2_table:
-    resb 4096
+    times(1024 - PDE_INDEX - 1) dd 0
 
 section .stack, nobits
 align 4
@@ -71,7 +58,31 @@ gdt64:
 
 section .text
 bits 32
+low_kernel_entry equ (start - VM_BASE)
 start:
+    ; update page directory address, since eax and ebx is in use, have to use ecx or other register
+    mov ecx, (TEMP_PAGE_DIRECTORY - VM_BASE)
+    mov cr3, ecx
+
+    ; Enable 4mb pages
+    mov ecx, cr4;
+    or ecx, PSE_BIT
+    mov cr4, ecx
+
+    ; Set PG bit, enable paging
+    mov ecx, cr0
+    or ecx, PG_BIT
+    mov cr0, ecx
+
+    ; Why not just jmp higher_half ? If you do that, that will be a relative jmp, so u r jumping to virtual memory around 0x100000, which is fine since we have identity mapped earlier
+    ; but we also want to change the eip(now point to somewhere around 0x100000) to somewhere around 0xc0100000, so we need to get the absolute address of higher half into ecx, and jmp ecx
+    lea ecx, [higher_half]
+    jmp ecx
+higher_half:
+    ; Unmap the first 4mb physical mem, because we don't need it anymore. Flush the tlb too
+    mov dword[TEMP_PAGE_DIRECTORY], 0
+    invlpg[0]
+
 	mov esp, stack_top
 	; pass magix
 
@@ -83,9 +94,6 @@ start:
 
 	call check_cpuid
 	call check_long_mode
-
-	call set_up_page_tables
-	call enable_paging
 
     lgdt [gdt64.pointer]
 
@@ -147,62 +155,6 @@ check_long_mode:
 .no_long_mode:
     mov al, "2"
     jmp error
-
-set_up_page_tables:	
-    ; cf. http://os.phil-opp.com/modifying-page-tables.html
-	; required to implement recursive mapping (paging)
-	mov eax, p4_table
-	or eax, 0b11 ; present + writable
-	mov [p4_table + 511 * 8], eax
-
-    ; Point the first entry of the level 4 page table to the first entry in the
-    ; p3 table
-    mov eax, p3_table
-    or eax, 0b11
-    mov dword [p4_table + 0], eax
-
-    ; Point the first entry of the level 3 page table to the first entry in the
-    ; p2 table
-    mov eax, p2_table
-    or eax, 0b11
-    mov dword [p3_table + 0], eax
-
-    ; point each page table level two entry to a page
-    mov ecx, 0         ; counter variable
-.map_p2_table:
-    mov eax, 0x200000  ; 2MiB
-    mul ecx
-    or eax, 0b10000011
-    mov [p2_table + ecx * 8], eax
-
-    inc ecx
-    cmp ecx, 512
-    jne .map_p2_table
-
-    ret
-
-enable_paging:
-    ; move page table address to cr3
-    mov eax, p4_table
-    mov cr3, eax
-
-    ; enable PAE
-    mov eax, cr4
-    or eax, 1 << 5
-    mov cr4, eax
-
-    ; set the long mode bit
-    mov ecx, 0xC0000080
-    rdmsr
-    or eax, 1 << 8
-    wrmsr
-
-    ; enable paging
-    mov eax, cr0
-    or eax, 1 << 31
-    or eax, 1 << 16
-    mov cr0, eax
-	ret
 
 ; Prints `ERR: ` and the given error code to screen and hangs.
 ; parameter: error code (in ascii) in al
